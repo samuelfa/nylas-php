@@ -1,5 +1,5 @@
 {
-    "name": "nylas/nylas-php",
+    "name": "lanlin/nylas-php",
     "description": "PHP wrapper for the Nylas API",
     "license": "MIT",
     "copyright": "Nylas 2015",
@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=5.4",
-        "guzzlehttp/guzzle": "~5.0"
+        "guzzlehttp/guzzle": "~6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4"
