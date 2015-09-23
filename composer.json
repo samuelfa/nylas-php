@@ -1,5 +1,5 @@
 {
-    "name": "lanlin/nylas-php",
+    "name": "nylas/nylas-php",
     "description": "PHP wrapper for the Nylas API",
     "license": "MIT",
     "copyright": "Nylas 2015",
