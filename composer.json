@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=5.4",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        
     },
     "require-dev": {
         "phpunit/phpunit": "~4"
@@ -21,6 +22,12 @@
             "Nylas\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/lanlin/nylas-php"
+        }
+    ],
     "extra": {
         "branch-alias": {
             "dev-master": "0.0.1-dev"
