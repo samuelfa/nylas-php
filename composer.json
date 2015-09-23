@@ -22,12 +22,6 @@
             "Nylas\\": "src/"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/lanlin/nylas-php"
-        }
-    ],
     "extra": {
         "branch-alias": {
             "dev-master": "0.0.1-dev"
