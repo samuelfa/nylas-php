@@ -74,7 +74,7 @@ class Nylas
      */
     private function createApiClient()
     {
-        return new GC(['base_url' => $this->apiServer]);
+        return new GC(['base_uri' => $this->apiServer]);
     }
 
     // ------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ class Nylas
         $payload = array();
         $payload['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
         $payload['headers']['Accept'] = 'text/plain';
-        $payload['body'] = $args;
+        $payload['form_params'] = $args;
 
         $response = $this->apiClient->post($url, $payload)->getBody()->getContents();
         $response = json_decode($response);
@@ -327,7 +327,7 @@ class Nylas
         if ($klass->collectionName == 'files')
         {
             $payload['headers']['Content-Type'] = 'multipart/form-data';
-            $payload['body'] = $data;
+            $payload['multipart'] = $data;
         }
         else
         {
@@ -358,7 +358,7 @@ class Nylas
         if ($klass->collectionName == 'files')
         {
             $payload['headers']['Content-Type'] = 'multipart/form-data';
-            $payload['body'] = $data;
+            $payload['multipart'] = $data;
         }
         else
         {
