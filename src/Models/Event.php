@@ -5,38 +5,62 @@ namespace Nylas\Models;
 use Nylas\NylasAPIObject;
 
 
-class Event extends NylasAPIObject {
+class Event extends NylasAPIObject
+{
 
     public $collectionName = 'events';
-    public $attrs = array("id", "namespace_id", "title", "description",
-                          "location", "read_only", "when", "busy",
-                          "participants", "calendar_id", "recurrence",
-                          "status", "master_event_id", "original_start_time");
+    public $attrs = array(
+        "id",
+        "namespace_id",
+        "title",
+        "description",
+        "location",
+        "read_only",
+        "when",
+        "busy",
+        "participants",
+        "calendar_id",
+        "recurrence",
+        "status",
+        "master_event_id",
+        "original_start_time"
+    );
 
-    public function __construct($api, $namespace) {
+    public function __construct($api, $namespace)
+    {
         parent::__construct();
         $this->api = $api;
         $this->namespace = $namespace;
     }
 
-    public function create($data, $api=NULL) {
+    public function create($data, $api = NULL)
+    {
         $sanitized = array();
-        foreach($this->attrs as $attr) {
-            if(array_key_exists($attr, $data)) {
+        foreach ($this->attrs as $attr)
+        {
+            if (array_key_exists($attr, $data))
+            {
                 $sanitized[$attr] = $data[$attr];
             }
         }
 
-        if(!$api) {
+        if (!$api)
+        {
             $api = $this->api->klass;
-        } else {
+        }
+        else
+        {
             $api = $api->api;
         }
 
-        if(!array_key_exists('calendar_id', $sanitized)) {
-            if($this->api->collectionName == 'calendars') {
+        if (!array_key_exists('calendar_id', $sanitized))
+        {
+            if ($this->api->collectionName == 'calendars')
+            {
                 $sanitized['calendar_id'] = $this->api->id;
-            } else {
+            }
+            else
+            {
                 throw new Exception("Missing calendar_id", 1);
             }
         }
@@ -47,10 +71,13 @@ class Event extends NylasAPIObject {
         return $this->api->_createResource($this->namespace, $this, $this->data);
     }
 
-    public function update($data) {
+    public function update($data)
+    {
         $sanitized = array();
-        foreach($this->attrs as $attr) {
-            if(array_key_exists($attr, $data)) {
+        foreach ($this->attrs as $attr)
+        {
+            if (array_key_exists($attr, $data))
+            {
                 $sanitized[$attr] = $data[$attr];
             }
         }
@@ -59,7 +86,8 @@ class Event extends NylasAPIObject {
     }
 
 
-    public function delete() {
+    public function delete()
+    {
         return $this->klass->_deleteResource($this->namespace, $this, $this->id);
     }
 

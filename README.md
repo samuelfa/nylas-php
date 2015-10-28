@@ -2,6 +2,13 @@
 
 PHP bindings for the Nylas REST API [https://www.nylas.com](https://www.nylas.com)
 
+## Modification
+I fork this project, because i find the orignial package only suport guzzle 5.
+Now i made some change, so it can support guzzle >6.0.
+
+Be care, there maybe has some bugs that i have not found yet.
+
+
 ## Installation
 
 You can install the library by running:
