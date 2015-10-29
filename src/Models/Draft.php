@@ -11,6 +11,7 @@ class Draft extends NylasAPIObject
 {
 
     public $collectionName = 'drafts';
+
     public $attrs = array(
         'subject',
         'to',

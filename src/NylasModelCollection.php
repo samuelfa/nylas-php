@@ -16,12 +16,18 @@ class NylasModelCollection
 
     private $chunkSize = 50;
 
+    /** @var NylasAPIObject */
+    private $klass;
+
+    /** @var Nylas */
+    private $api;
+
     // ------------------------------------------------------------------------------
 
     /**
-     * @param $klass
-     * @param $api
-     * @param null $namespace
+     * @param NylasAPIObject $klass
+     * @param Nylas $api
+     * @param \Nylas\Models\Account|null $namespace
      * @param array $filter
      * @param int $offset
      * @param array $filters

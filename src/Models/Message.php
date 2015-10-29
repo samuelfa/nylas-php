@@ -7,6 +7,11 @@ use Nylas\NylasAPIObject;
 
 class Message extends NylasAPIObject
 {
+    /** @var \Nylas\Nylas */
+    private $api;
+
+    /** @var \Nylas\Models\Account|null */
+    private $namespace;
 
     public $collectionName = 'messages';
 

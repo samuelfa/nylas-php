@@ -9,10 +9,19 @@
  */
 namespace Nylas;
 
-use Nylas\Models;
 use GuzzleHttp;
 use GuzzleHttp\Exception;
-use GuzzleHttp\Client as GC;
+use GuzzleHttp\Client as GuzzleClient;
+
+use Nylas\Models;
+use Nylas\Models\Calendar;
+use Nylas\Models\Contact;
+use Nylas\Models\Draft;
+use Nylas\Models\Event;
+use Nylas\Models\File;
+use Nylas\Models\Message;
+use Nylas\Models\Tag;
+use Nylas\Models\Thread;
 
 
 /**
@@ -27,10 +36,10 @@ class Nylas
 
     // ------------------------------------------------------------------------------
 
+    public    $apiRoot   = 'n';
     protected $apiServer = 'https://api.nylas.com';
     protected $apiClient;
     protected $apiToken;
-    public $apiRoot = 'n';
 
     // ------------------------------------------------------------------------------
 
@@ -60,16 +69,16 @@ class Nylas
      */
     protected function createHeaders()
     {
-        $token   = 'Basic ' . base64_encode($this->apiToken . ':');
+        $token = 'Basic ' . base64_encode($this->apiToken . ':');
 
         $headers =
-        [
-            'headers' =>
             [
-                'Authorization' => $token,
-                'X-Nylas-API-Wrapper' => 'php'
-            ]
-        ];
+                'headers' =>
+                    [
+                        'Authorization' => $token,
+                        'X-Nylas-API-Wrapper' => 'php'
+                    ]
+            ];
 
         return $headers;
     }
@@ -77,11 +86,11 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
-     * @return GC
+     * @return GuzzleClient
      */
     private function createApiClient()
     {
-        return new GC(['base_uri' => $this->apiServer]);
+        return new GuzzleClient(['base_uri' => $this->apiServer]);
     }
 
     // ------------------------------------------------------------------------------
@@ -100,14 +109,14 @@ class Nylas
     public function createAuthURL($redirect_uri, $login_hint = NULL, $userid = NULL)
     {
         $args =
-        [
-            "scope" => "email",
-            "client_id" => $this->appID,
-            "redirect_uri" => $redirect_uri,
-            "response_type" => "code",
-            "login_hint" => $login_hint,
-            "state" => $userid ? $userid : $this->generateId()
-        ];
+            [
+                "scope" => "email",
+                "client_id" => $this->appID,
+                "redirect_uri" => $redirect_uri,
+                "response_type" => "code",
+                "login_hint" => $login_hint,
+                "state" => $userid ? $userid : $this->generateId()
+            ];
 
         return $this->apiServer . '/oauth/authorize?' . http_build_query($args);
     }
@@ -127,15 +136,17 @@ class Nylas
 
         try
         {
-            $response = $this->apiClient->get($url)->getBody()->getContents();
+            $response =
+                $this->apiClient->get($url, $this->createHeaders())
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
 
-        return json_decode($response);
+        return json_decode($response, TRUE);
     }
 
     // ------------------------------------------------------------------------------
@@ -153,15 +164,17 @@ class Nylas
 
         try
         {
-            $response = $this->apiClient->get($url)->getBody()->getContents();
+            $response =
+                $this->apiClient->get($url, $this->createHeaders())
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
 
-        return json_decode($response);
+        return json_decode($response, TRUE);
     }
 
     // ------------------------------------------------------------------------------
@@ -179,15 +192,17 @@ class Nylas
 
         try
         {
-            $response = $this->apiClient->get($url)->getBody()->getContents();
+            $response =
+                $this->apiClient->get($url, $this->createHeaders())
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
 
-        return json_decode($response);
+        return json_decode($response, TRUE);
     }
 
     // ------------------------------------------------------------------------------
@@ -199,32 +214,28 @@ class Nylas
     public function getAuthToken($code)
     {
         $args =
-        [
-            "code"          => $code,
-            "client_id"     => $this->appID,
-            "client_secret" => $this->appSecret,
-            "grant_type"    => "authorization_code"
-        ];
+            [
+                "code" => $code,
+                "client_id" => $this->appID,
+                "client_secret" => $this->appSecret,
+                "grant_type" => "authorization_code"
+            ];
 
         $url = $this->apiServer . '/oauth/token';
 
         try
         {
             $response =
-            $this->apiClient->post($url, ['form_params' =>$args])
-            ->getBody()->getContents();
+                $this->apiClient->post($url, ['form_params' => $args])
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
-           return $e->getResponse();
+            return $e->getResponse();
         }
 
-        log_file($response, '1');
-
-        $response = json_decode($response);
-
-        log_file($response, '2');
+        $response = json_decode($response, TRUE);
 
         if (array_key_exists('access_token', $response))
         {
@@ -237,12 +248,100 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * @return mixed
+     */
+    public function account()
+    {
+        $account = new Models\Account($this, null);
+        return $this->getResource(null, $account, null, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * @return NylasModelCollection
      */
-    public function namespaces()
+    public function messages()
     {
-        $nsObj = new Models\Namespaces($this, NULL);
-        return new NylasModelCollection($nsObj, $this, NULL);
+        $msgObj = new Message($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return NylasModelCollection
+     */
+    public function threads()
+    {
+        $msgObj = new Thread($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return NylasModelCollection
+     */
+    public function drafts()
+    {
+        $msgObj = new Draft($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return NylasModelCollection
+     */
+    public function tags()
+    {
+        $msgObj = new Tag($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return NylasModelCollection
+     */
+    public function files()
+    {
+        $msgObj = new File($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return NylasModelCollection
+     */
+    public function contacts()
+    {
+        $msgObj = new Contact($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return NylasModelCollection
+     */
+    public function calendars()
+    {
+        $msgObj = new Calendar($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return NylasModelCollection
+     */
+    public function events()
+    {
+        $msgObj = new Event($this, null);
+        return new NylasModelCollection($msgObj, $this, null, array(), 0, array());
     }
 
     // ------------------------------------------------------------------------------
@@ -261,10 +360,12 @@ class Nylas
 
         try
         {
-            $data = $this->apiClient->get($url, $this->createHeaders())->getBody()->getContents();
+            $data =
+            $this->apiClient->get($url, $this->createHeaders())
+            ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
@@ -331,10 +432,10 @@ class Nylas
         try
         {
             $data = $this->apiClient->get($url, $this->createHeaders())
-            ->getBody()->getContents();
+                ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
@@ -369,11 +470,11 @@ class Nylas
         try
         {
             $data =
-            $this->apiClient->get($url, $this->createHeaders())
-            ->getBody()->getContents();
+                $this->apiClient->get($url, $this->createHeaders())
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
@@ -408,10 +509,12 @@ class Nylas
 
         try
         {
-            $response = $this->apiClient->post($url, $payload)->getBody()->getContents();
+            $response =
+                $this->apiClient->post($url, $payload)
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
@@ -447,10 +550,12 @@ class Nylas
 
         try
         {
-            $response = $this->apiClient->put($url, $payload)->getBody()->getContents();
+            $response =
+                $this->apiClient->put($url, $payload)
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
@@ -476,10 +581,12 @@ class Nylas
 
         try
         {
-            $response = $this->apiClient->delete($url, $payload)->getBody()->getContents();
+            $response =
+                $this->apiClient->delete($url, $payload)
+                    ->getBody()->getContents();
         }
 
-        catch(GuzzleHttp\Exception\ClientException $e)
+        catch (GuzzleHttp\Exception\ClientException $e)
         {
             return $e->getMessage();
         }
