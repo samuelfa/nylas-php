@@ -11,11 +11,21 @@ Be care, there maybe has some bugs that i have not found yet.
 
 ## Installation
 
-You can install the library by running:
+You can install my fork library by add the following repository to your recomposer.json
+
+```json
+"repositories": [
+    {
+        "type": "git",
+        "url": "https://github.com/lanlin/nylas-php.git"
+    }
+]
+```
+
+And then run following command in CLI
 
 ```php
-cd nylas-php
-composer install
+composer require "nylas/nylas-php:1.0.0.7"
 ```
 
 
@@ -38,7 +48,9 @@ In practice, the Nylas REST API client simplifies this down to two steps.
 
 ```php
 $client = new Nylas(CLIENT, SECRET);
+
 $redirect_url = 'http://localhost:8080/login_callback.php';
+
 $get_auth_url = $client->createAuthURL($redirect_url);
 
 // redirect to Nylas auth server
@@ -49,7 +61,9 @@ header("Location: ".$get_auth_url);
 
 ```php
 $access_code = $_GET['code'];
+
 $client = new Nylas(CLIENT, SECRET);
+
 $get_token = $client->getAuthToken($access_code);
 
 // save token in session
@@ -57,38 +71,32 @@ $_SESSION['access_token'] = $get_token;
 ```
 
 
-## Fetching Namespaces
-
-```php
-$client = new Nylas(CLIENT, SECRET, TOKEN);
-$namespace = $client->namespaces()->first();
-
-echo $namespace->email_address;
-echo $namespace->provider;
-```
-
-
-
 ## Fetching Threads
 
 ```php
+// init client!
 $client = new Nylas(CLIENT, SECRET, TOKEN);
-$namespace = $client->namespaces()->first();
 
 // Fetch the first thread
-$first_thread = $namespace->threads()->first();
+$first_thread = $client->threads()->first();
+
 echo $first_thread->id;
 
 // Fetch first 2 latest threads
-$two_threads = $namespace->threads()->all(2);
-foreach($two_threads as $thread) {
+$two_threads = $client->threads()->all(2);
+
+foreach($two_threads as $thread)
+{
     echo $thread->id;
 }
 
 // List all threads with 'ben@nylas.com'
 $search_criteria = array("any_email" => "ben@nylas.com");
-$get_threads = $namespace->threads()->where($search_criteria)->items()
-foreach($get_threads as $thread) {
+
+$get_threads = $client->threads()->where($search_criteria)->items()
+
+foreach($get_threads as $thread)
+{
     echo $thread->id;
 }
 ```
@@ -97,7 +105,8 @@ foreach($get_threads as $thread) {
 
 ```php
 // List thread participants
-foreach($thead->participants as $participant) {
+foreach($thead->participants as $participant)
+{
     echo $participant->email;
     echo $participant->name;
 }
@@ -126,11 +135,13 @@ $thread->unstar();
 // Add or remove arbitrary tags
 $to_add = array('cfa1233ef123acd12');
 $to_remove = array('inbox');
+
 $thread->addTags($to_add);
 $thread->removeTags($to_remove);
 
 // Listing messages
-foreach($thread->messages()->items() as $message) {
+foreach($thread->messages()->items() as $message)
+{
     echo $message->subject;
     echo $message->body;
 }
@@ -141,10 +152,11 @@ foreach($thread->messages()->items() as $message) {
 
 ```php
 $client = new Nylas(CLIENT, SECRET, TOKEN);
-$namespace = $client->namespaces()->first();
 
 $file_path = '/var/my/folder/test_file.pdf';
-$upload_resp = $namespace->files()->create($file_path);
+
+$upload_resp = $client->files()->create($file_path);
+
 echo $upload_resp->id;
 ```
 
@@ -152,41 +164,73 @@ echo $upload_resp->id;
 
 ```php
 $client = new Nylas(CLIENT, SECRET, TOKEN);
-$namespace = $client->namespaces()->first();
 
-$person_obj = new \Nylas\Models\Person('Kartik Talwar', 'kartik@nylas.com');
-$message_obj = array( "to" => array($person_obj),
-                      "subject" => "Hello, PHP!",
-                      "body" => "Test <br> message");
+$message =
+[
+     "to"      =>
+     [
+         ["name" => "Nylas", "email" => "nylas@nylas.com"],
+         ["name" => "Goole", "email" => "goole@google.com"],
+     ],
+     "subject" => "Hello, PHP!",
+     "body"    => "Test <br> message"
+];
 
-$draft = $namespace->drafts()->create($message_obj);
-$send_message = $draft->send();
+$draft = $client->drafts()->create($message_obj);
+
+$send_message = $draft->send( ['id' => $draft->id] );
+
 echo $send_message->id;
+```
+
+## Working with Send Directly
+
+Carefully, send directly is diffrent from create a draft and then send it above.
+
+```php
+$client = new Nylas(CLIENT, SECRET, TOKEN);
+
+$message =
+[
+     "to"      =>
+     [
+         ["name" => "Nylas", "email" => "nylas@nylas.com"],
+         ["name" => "Goole", "email" => "goole@google.com"],
+     ],
+     "subject" => "Hello, PHP!",
+     "body"    => "Test <br> message"
+];
+
+$draft = $client->drafts()->send($message_obj);
 ```
 
 ## Working with Events
 
 ```php
 $client = new Nylas(CLIENT, SECRET, TOKEN);
-$namespace = $client->namespaces()->first();
-$calendars = $namespace->calendars()->all();
+
+$calendars = $client->calendars()->all();
 
 $calendar = null;
-foeach($calendars as $i) {
-  if(!$i->read_only) {
-    $calendar = $i;
-  }
+
+foeach($calendars as $i)
+{
+    if(!$i->read_only) { $calendar = $i; }
 }
 
-$person_obj = new \Nylas\Models\Person('Kartik Talwar', 'kartik@nylas.com');
-$calendar_obj = array("title" => "Important Meeting",
-                      "location" => "Nylas HQ",
-                      "participants" => array($person_obj),
-                      "calendar_id" => $calendar->id,
-                      "when" => array("start_time" => time(),
-                                      "end_time" => time() + (30*60)));
+$calendar_data =
+[
+    "title"        => "Important Meeting",
+    "location"     => "Nylas HQ",
+    "participants" => [ ["name" => "nylas", "email" => "nylas@nylas.com"] ]
+    "calendar_id"  => $calendar->id,
+    "when"         => array("start_time" => time(),
+    "end_time"     => time() + (30*60))
+];
+
 // create event
-$event = $namespace->events()->create($calendar_obj);
+$event = $client->events()->create($calendar_data);
+
 echo $event->id;
 
 // update
@@ -194,22 +238,21 @@ $event = $event->update(array("location" => "Meeting room #1"));
 
 // delete event
 $event->delete();
+
 // delete event (alternate)
-$remove = $namespace->events()->find($event->id)->delete();
+$remove = $client->events()->find($event->id)->delete();
 ```
 
 
+## End
 
-## Open-Source Sync Engine
+This nylas-php project is forked by https://github.com/lanlin,
 
-The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and you can also use the PHP library with the open-source API. Since the open-source API provides no authentication or security, connecting to it is simple. When you instantiate the Nylas object, provide null for the App ID, App Secret, and API Token, and pass the fully-qualified address of your copy of the sync engine:
+it's not the official version. The official version has many bugs.
 
-```php
-$client = new Nylas(CLIENT, SECRET, TOKEN, 'http://localhost:5555/');
-```
+And not suport guzzle >6.0 yet. So i fork it, and made many modification.
 
-## Contributing
+Surely there's bugs in my fork, but i not have much time on this.
 
-We'd love your help making Nylas better. Join the Google Group for project updates and feature discussion. We also hang out in `#nylas` on [irc.freenode.net](irc.freenode.net), or you can email [support@nylas.com](mailto:support@nylas.com).
+So, help fix these bugs, request pulls are welcome.
 
-Please sign the Contributor License Agreement before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
