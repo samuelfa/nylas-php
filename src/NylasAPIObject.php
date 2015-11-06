@@ -45,6 +45,8 @@ class NylasAPIObject
     {
         $this->data = $objects;
         $this->klass = $klass;
+        $this->namespace = $namespace;
+
         return $this;
     }
 

@@ -133,7 +133,18 @@ class NylasModelCollection
      */
     public function create($data)
     {
-        return $this->klass->create($data, $this);
+        return $this->klass->create($data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    public function send($data)
+    {
+        return $this->klass->send($data);
     }
 
     // ------------------------------------------------------------------------------
@@ -190,4 +201,5 @@ class NylasModelCollection
     }
 
     // ------------------------------------------------------------------------------
+
 }

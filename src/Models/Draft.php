@@ -3,16 +3,28 @@
 namespace Nylas\Models;
 
 use Nylas\NylasAPIObject;
-use Nylas\Models\Person;
 use Nylas\Models\Send;
 
-
+/**
+ * ----------------------------------------------------------------------------------
+ * Draft
+ * ----------------------------------------------------------------------------------
+ *
+ * @package Nylas\Models
+ * @author lanlin
+ * @change 2015-11-06
+ */
 class Draft extends NylasAPIObject
 {
 
+    // ------------------------------------------------------------------------------
+
     public $collectionName = 'drafts';
 
+    // ------------------------------------------------------------------------------
+
     public $attrs = array(
+        'id',
         'subject',
         'to',
         'cc',
@@ -21,15 +33,27 @@ class Draft extends NylasAPIObject
         'reply_to',
         'thread_id',
         'body',
-        'file_ids'
+        'file_ids',
+        'version'
     );
+
+    // ------------------------------------------------------------------------------
 
     public function __construct($api, $namespace)
     {
         parent::__construct();
+
+        $this->api = $api;
+        $this->namespace = $namespace;
     }
 
-    public function create($data, $api)
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    public function create($data)
     {
         $sanitized = array();
         foreach ($this->attrs as $attr)
@@ -41,14 +65,18 @@ class Draft extends NylasAPIObject
         }
 
         $this->data = $sanitized;
-        $this->api = $api->api;
-        $this->namespace = $api->namespace;
-        return $this;
+
+        return $this->api->_createResource($this->namespace, $this, $this->data);
     }
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param $data
+     * @return mixed
+     */
     public function update($data)
     {
-        $allowed = array();
         foreach ($this->attrs as $attr)
         {
             if (array_key_exists($attr, $data))
@@ -58,9 +86,16 @@ class Draft extends NylasAPIObject
         }
 
         $this->data = array_merge($this->data, $sanitized);
-        return $this;
+
+        return $this->api->_updateResource($this->namespace, $this, $data['id'], $this->data);
     }
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param $fileObj
+     * @return $this
+     */
     public function attach($fileObj)
     {
         if (array_key_exists('file_ids', $this->data))
@@ -75,6 +110,12 @@ class Draft extends NylasAPIObject
         return $this;
     }
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param $fileObj
+     * @return $this
+     */
     public function detach($fileObj)
     {
         if (in_array($fileObj->id, $this->data['file_ids']))
@@ -85,19 +126,33 @@ class Draft extends NylasAPIObject
         return $this;
     }
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        return $this->klass->_deleteResource($this->namespace, $this, $id);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * this could send directly or send an already created draft
+     *
+     * @param null $data
+     * @return mixed
+     */
     public function send($data = NULL)
     {
         $data = ($data) ? $data : $this->data;
-        if (array_key_exists('id', $data))
-        {
-            $resource = $this->api->_updateResource($this->namespace, $this, $id, $data);
-        }
-        else
-        {
-            $resource = $this->api->_createResource($this->namespace, $this, $data);
-        }
 
         $send_object = new Send($this->api, $this->namespace);
-        return $send_object->send($resource->data);
+        return $send_object->send($data);
     }
+
+    // ------------------------------------------------------------------------------
+
 }

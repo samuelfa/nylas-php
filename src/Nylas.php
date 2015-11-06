@@ -13,7 +13,7 @@ use GuzzleHttp;
 use GuzzleHttp\Exception;
 use GuzzleHttp\Client as GuzzleClient;
 
-use Nylas\Models;
+use Nylas\Models\Account;
 use Nylas\Models\Calendar;
 use Nylas\Models\Contact;
 use Nylas\Models\Draft;
@@ -72,13 +72,9 @@ class Nylas
         $token = 'Basic ' . base64_encode($this->apiToken . ':');
 
         $headers =
-            [
-                'headers' =>
-                    [
-                        'Authorization' => $token,
-                        'X-Nylas-API-Wrapper' => 'php'
-                    ]
-            ];
+        [
+            'headers' => [ 'Authorization' => $token, 'X-Nylas-API-Wrapper' => 'php' ]
+        ];
 
         return $headers;
     }
@@ -109,14 +105,14 @@ class Nylas
     public function createAuthURL($redirect_uri, $login_hint = NULL, $userid = NULL)
     {
         $args =
-            [
-                "scope" => "email",
-                "client_id" => $this->appID,
-                "redirect_uri" => $redirect_uri,
-                "response_type" => "code",
-                "login_hint" => $login_hint,
-                "state" => $userid ? $userid : $this->generateId()
-            ];
+        [
+            "scope" => "email",
+            "client_id" => $this->appID,
+            "redirect_uri" => $redirect_uri,
+            "response_type" => "code",
+            "login_hint" => $login_hint,
+            "state" => $userid ? $userid : $this->generateId()
+        ];
 
         return $this->apiServer . '/oauth/authorize?' . http_build_query($args);
     }
@@ -252,7 +248,7 @@ class Nylas
      */
     public function account()
     {
-        $account = new Models\Account($this, null);
+        $account = new Account($this, null);
         return $this->getResource(null, $account, null, array());
     }
 
@@ -497,21 +493,15 @@ class Nylas
 
         $payload = $this->createHeaders();
 
-        if ($klass->collectionName == 'files')
-        {
-            $payload['multipart'] = $data;
-        }
-        else
-        {
-            $payload['headers']['Content-Type'] = 'application/json';
-            $payload['json'] = $data;
-        }
+        $klass->collectionName == 'files' ?
+        $payload['multipart'] = $data :
+        $payload['json'] = $data;
 
         try
         {
             $response =
-                $this->apiClient->post($url, $payload)
-                    ->getBody()->getContents();
+            $this->apiClient->post($url, $payload)
+            ->getBody()->getContents();
         }
 
         catch (GuzzleHttp\Exception\ClientException $e)
@@ -538,15 +528,11 @@ class Nylas
         $prefix = ($namespace) ? '/' . $klass->apiRoot . '/' . $namespace : '';
         $url = $this->apiServer . $prefix . '/' . $klass->collectionName . '/' . $id;
 
-        if ($klass->collectionName == 'files')
-        {
-            $payload['multipart'] = $data;
-        }
-        else
-        {
-            $payload = $this->createHeaders();
-            $payload['json'] = $data;
-        }
+        $payload = $this->createHeaders();
+
+        $klass->collectionName == 'files' ?
+        $payload['multipart'] = $data :
+        $payload['json'] = $data;
 
         try
         {

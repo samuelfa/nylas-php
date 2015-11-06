@@ -4,11 +4,23 @@ namespace Nylas\Models;
 
 use Nylas\NylasAPIObject;
 
-
+/**
+ * ----------------------------------------------------------------------------------
+ * Send
+ * ----------------------------------------------------------------------------------
+ *
+ * @package Nylas\Models
+ * @author lanlin
+ * @change 2015-11-06
+ */
 class Send extends NylasAPIObject
 {
 
+    // ------------------------------------------------------------------------------
+
     public $collectionName = 'send';
+
+    // ------------------------------------------------------------------------------
 
     public function __construct($api, $namespace)
     {
@@ -17,21 +29,27 @@ class Send extends NylasAPIObject
         $this->namespace = $namespace;
     }
 
-    public function send($data)
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public function send(array $data)
     {
         if (array_key_exists('id', $data))
         {
             $payload = array(
                 "draft_id" => $data['id'],
-                "version" => $data['version']
+                "version"  => $data['version']
             );
         }
-        else
-        {
-            $payload = $data;
-        }
+
+        else { $payload = $data; }
 
         return $this->api->_createResource($this->namespace, $this, $payload);
     }
+
+    // ------------------------------------------------------------------------------
 
 }
