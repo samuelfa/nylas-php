@@ -4,16 +4,33 @@ namespace Nylas\Models;
 
 use Nylas\NylasAPIObject;
 
-
+/**
+ * ----------------------------------------------------------------------------------
+ * Message
+ * ----------------------------------------------------------------------------------
+ *
+ * @package Nylas\Models
+ * @author lanlin
+ * @change 2015-11-06
+ */
 class Message extends NylasAPIObject
 {
+
+    // ------------------------------------------------------------------------------
+
     /** @var \Nylas\Nylas */
     private $api;
+
+    // ------------------------------------------------------------------------------
 
     /** @var \Nylas\Models\Account|null */
     private $namespace;
 
+    // ------------------------------------------------------------------------------
+
     public $collectionName = 'messages';
+
+    // ------------------------------------------------------------------------------
 
     public function __construct($api, $namespace)
     {
@@ -22,6 +39,11 @@ class Message extends NylasAPIObject
         $this->namespace = $namespace;
     }
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return null|string
+     */
     public function raw()
     {
         $resource =
@@ -32,5 +54,7 @@ class Message extends NylasAPIObject
         }
         return NULL;
     }
+
+    // ------------------------------------------------------------------------------
 
 }

@@ -4,11 +4,23 @@ namespace Nylas\Models;
 
 use Nylas\NylasAPIObject;
 
-
+/**
+ * ----------------------------------------------------------------------------------
+ * File
+ * ----------------------------------------------------------------------------------
+ *
+ * @package Nylas\Models
+ * @author lanlin
+ * @change 2015-11-06
+ */
 class File extends NylasAPIObject
 {
 
+    // ------------------------------------------------------------------------------
+
     public $collectionName = 'files';
+
+    // ------------------------------------------------------------------------------
 
     public function __construct($api, $namespace)
     {
@@ -17,6 +29,12 @@ class File extends NylasAPIObject
         $this->namespace = $namespace;
     }
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @param $file_name
+     * @return $this
+     */
     public function create($file_name)
     {
         $payload = array(
@@ -30,10 +48,20 @@ class File extends NylasAPIObject
         return $this;
     }
 
+    // ------------------------------------------------------------------------------
+
+    /**
+     * @return string
+     */
     public function download()
     {
         $resource =
-            $this->klass->getResourceData($this->namespace, $this, $this->data['id'], array('extra' => 'download'));
+            $this->klass->getResourceData(
+                $this->namespace,
+                $this,
+                $this->data['id'],
+                array('extra' => 'download')
+            );
 
         $data = '';
         while (!$resource->eof())
@@ -43,5 +71,7 @@ class File extends NylasAPIObject
 
         return $data;
     }
+
+    // ------------------------------------------------------------------------------
 
 }
