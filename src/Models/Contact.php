@@ -24,15 +24,12 @@ class Contact extends NylasAPIObject
 
     /**
      * Contact constructor.
+     *
      * @param $api
-     * @param $namespace
      */
-    public function __construct($api, $namespace)
+    public function __construct($api)
     {
         parent::__construct();
-
-        $this->api = $api->api;
-        $this->namespace = $api->namespace;
     }
 
     // ------------------------------------------------------------------------------

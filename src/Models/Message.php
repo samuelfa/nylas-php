@@ -18,25 +18,20 @@ class Message extends NylasAPIObject
 
     // ------------------------------------------------------------------------------
 
-    /** @var \Nylas\Nylas */
-    private $api;
-
-    // ------------------------------------------------------------------------------
-
-    /** @var \Nylas\Models\Account|null */
-    private $namespace;
-
-    // ------------------------------------------------------------------------------
-
     public $collectionName = 'messages';
 
     // ------------------------------------------------------------------------------
 
-    public function __construct($api, $namespace)
+    /**
+     * Message constructor.
+     *
+     * @param $api
+     */
+    public function __construct($api)
     {
         parent::__construct();
+
         $this->api = $api;
-        $this->namespace = $namespace;
     }
 
     // ------------------------------------------------------------------------------
@@ -46,13 +41,22 @@ class Message extends NylasAPIObject
      */
     public function raw()
     {
+        $data = '';
+        $headers = array('Accept' => 'message/rfc822');
+
         $resource =
-            $this->klass->getResourceRaw($this->namespace, $this, $this->data['id'], array('extra' => 'rfc2822'));
-        if (array_key_exists('rfc2822', $resource))
+        $this->klass->getResourceData(
+            $this,
+            $this->data['id'],
+            array('headers' => $headers)
+        );
+
+        while (!$resource->eof())
         {
-            return base64_decode($resource['rfc2822']);
+            $data .= $resource->read(1024);
         }
-        return NULL;
+
+        return $data;
     }
 
     // ------------------------------------------------------------------------------

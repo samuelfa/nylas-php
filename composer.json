@@ -2,14 +2,14 @@
     "name": "nylas/nylas-php",
     "description": "PHP wrapper for the Nylas API",
     "license": "MIT",
-    "copyright": "Nylas 2015",
+    "copyright": "Nylas 2016",
     "authors" : [
         {
           "name": "Kartik Talwar",
           "email": "kartik@kartikt.com"
         }
     ],
-    "minimum-stability": "1.0.0.7",
+    "minimum-stability": "1.1.0.0",
     "require": {
         "php": ">=5.4",
         "guzzlehttp/guzzle": "~6.0"

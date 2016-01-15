@@ -22,11 +22,10 @@ class Send extends NylasAPIObject
 
     // ------------------------------------------------------------------------------
 
-    public function __construct($api, $namespace)
+    public function __construct($api)
     {
         parent::__construct();
         $this->api = $api;
-        $this->namespace = $namespace;
     }
 
     // ------------------------------------------------------------------------------
@@ -47,7 +46,7 @@ class Send extends NylasAPIObject
 
         else { $payload = $data; }
 
-        return $this->api->_createResource($this->namespace, $this, $payload);
+        return $this->api->_createResource($this, $payload);
     }
 
     // ------------------------------------------------------------------------------

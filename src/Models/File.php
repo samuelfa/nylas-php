@@ -22,11 +22,16 @@ class File extends NylasAPIObject
 
     // ------------------------------------------------------------------------------
 
-    public function __construct($api, $namespace)
+    /**
+     * File constructor.
+     *
+     * @param $api
+     */
+    public function __construct($api)
     {
         parent::__construct();
+
         $this->api = $api;
-        $this->namespace = $namespace;
     }
 
     // ------------------------------------------------------------------------------
@@ -38,12 +43,14 @@ class File extends NylasAPIObject
     public function create($file_name)
     {
         $payload = array(
-            "name" => "file",
+            "name"     => "file",
             "filename" => basename($file_name),
             "contents" => fopen($file_name, 'r')
         );
-        $upload = $this->api->klass->_createResource($this->namespace, $this, $payload);
-        $data = $upload->data[0];
+
+        $upload = $this->api->_createResource($this, $payload);
+        $data   = $upload->data[0];
+
         $this->data = $data;
         return $this;
     }
@@ -57,13 +64,13 @@ class File extends NylasAPIObject
     {
         $resource =
             $this->klass->getResourceData(
-                $this->namespace,
                 $this,
                 $this->data['id'],
                 array('extra' => 'download')
             );
 
         $data = '';
+
         while (!$resource->eof())
         {
             $data .= $resource->read(1024);
