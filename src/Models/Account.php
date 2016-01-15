@@ -22,12 +22,12 @@ class Account extends NylasAPIObject
 
     // ------------------------------------------------------------------------------
 
-    public function __construct($api, $namespace)
+    /**
+     * Account constructor.
+     */
+    public function __construct()
     {
         parent::__construct();
-
-        $this->api = $api->api;
-        $this->namespace = $api->namespace;
     }
 
     // ------------------------------------------------------------------------------

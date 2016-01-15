@@ -6,28 +6,30 @@ use Nylas\NylasAPIObject;
 
 /**
  * ----------------------------------------------------------------------------------
- * Tag
+ * Label
  * ----------------------------------------------------------------------------------
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2015-12-28
  */
-class Tag extends NylasAPIObject
+class Label extends NylasAPIObject
 {
 
     // ------------------------------------------------------------------------------
 
-    public $collectionName = 'tags';
+    public $collectionName = 'labels';
 
     // ------------------------------------------------------------------------------
 
-    public function __construct($api, $namespace)
+    /**
+     * Label constructor.
+     *
+     * @param $api
+     */
+    public function __construct($api)
     {
         parent::__construct();
-
-        $this->api = $api->api;
-        $this->namespace = $api->namespace;
     }
 
     // ------------------------------------------------------------------------------

@@ -41,21 +41,27 @@ class Event extends NylasAPIObject
 
     // ------------------------------------------------------------------------------
 
-    public function __construct($api, $namespace)
+    /**
+     * Event constructor.
+     *
+     * @param $api
+     */
+    public function __construct($api)
     {
         parent::__construct();
+
         $this->api = $api;
-        $this->namespace = $namespace;
     }
 
     // ------------------------------------------------------------------------------
 
     /**
      * @param $data
+     * @param $api
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
-    public function create($data)
+    public function create($data, $api = NULL)
     {
         $sanitized = array();
         foreach ($this->attrs as $attr)
@@ -66,6 +72,11 @@ class Event extends NylasAPIObject
             }
         }
 
+        if(!$api) { $api = $this->api->klass; }
+
+        else { $api = $api->api; }
+
+
         if (!array_key_exists('calendar_id', $sanitized))
         {
             if ($this->api->collectionName == 'calendars')
@@ -74,12 +85,14 @@ class Event extends NylasAPIObject
             }
             else
             {
-                throw new Exception("Missing calendar_id", 1);
+                throw new \Exception("Missing calendar_id", 1);
             }
         }
 
+        $this->api  = $api;
         $this->data = $sanitized;
-        return $this->api->_createResource($this->namespace, $this, $this->data);
+
+        return $this->api->_createResource($this, $this->data);
     }
 
     // ------------------------------------------------------------------------------
@@ -91,6 +104,7 @@ class Event extends NylasAPIObject
     public function update($data)
     {
         $sanitized = array();
+
         foreach ($this->attrs as $attr)
         {
             if (array_key_exists($attr, $data))
@@ -99,7 +113,7 @@ class Event extends NylasAPIObject
             }
         }
 
-        return $this->api->klass->_updateResource($this->namespace, $this, $this->id, $sanitized);
+        return $this->api->_updateResource($this, $this->id, $sanitized);
     }
 
     // ------------------------------------------------------------------------------
@@ -109,7 +123,7 @@ class Event extends NylasAPIObject
      */
     public function delete()
     {
-        return $this->klass->_deleteResource($this->namespace, $this, $this->id);
+        return $this->klass->_deleteResource($this, $this->id);
     }
 
     // ------------------------------------------------------------------------------

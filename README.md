@@ -25,7 +25,7 @@ You can install my fork library by add the following repository to your recompos
 And then run following command in CLI
 
 ```php
-composer require "nylas/nylas-php:1.0.0.7"
+composer require "nylas/nylas-php:1.1.0.0"
 ```
 
 
@@ -84,6 +84,9 @@ echo $first_thread->id;
 
 // Fetch first 2 latest threads
 $two_threads = $client->threads()->all(2);
+
+// Fetch threads from offset 30, and limit 50
+$part_threads = $client->threads()->part(30, 50);
 
 foreach($two_threads as $thread)
 {

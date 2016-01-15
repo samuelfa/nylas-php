@@ -2,8 +2,8 @@
 
 namespace Nylas\Models;
 
+use Nylas\Models;
 use Nylas\NylasAPIObject;
-use Nylas\Models\Send;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -34,26 +34,30 @@ class Draft extends NylasAPIObject
         'thread_id',
         'body',
         'file_ids',
-        'version'
+        'version',
+        'reply_to_message_id'
     );
 
     // ------------------------------------------------------------------------------
 
-    public function __construct($api, $namespace)
+    /**
+     * Draft constructor.
+     *
+     * @param $api
+     */
+    public function __construct($api)
     {
         parent::__construct();
-
-        $this->api = $api;
-        $this->namespace = $namespace;
     }
 
     // ------------------------------------------------------------------------------
 
     /**
      * @param $data
+     * @param $api
      * @return mixed
      */
-    public function create($data)
+    public function create($data, $api)
     {
         $sanitized = array();
         foreach ($this->attrs as $attr)
@@ -64,9 +68,10 @@ class Draft extends NylasAPIObject
             }
         }
 
+        $this->api  = $api->api;
         $this->data = $sanitized;
 
-        return $this->api->_createResource($this->namespace, $this, $this->data);
+        return $this;
     }
 
     // ------------------------------------------------------------------------------
@@ -77,6 +82,8 @@ class Draft extends NylasAPIObject
      */
     public function update($data)
     {
+        $sanitized = [];
+
         foreach ($this->attrs as $attr)
         {
             if (array_key_exists($attr, $data))
@@ -87,7 +94,7 @@ class Draft extends NylasAPIObject
 
         $this->data = array_merge($this->data, $sanitized);
 
-        return $this->api->_updateResource($this->namespace, $this, $data['id'], $this->data);
+        return $this;
     }
 
     // ------------------------------------------------------------------------------
@@ -120,21 +127,11 @@ class Draft extends NylasAPIObject
     {
         if (in_array($fileObj->id, $this->data['file_ids']))
         {
-            $this->data['file_ids'] = array_diff($this->data['file_ids'], array($fileObj->id));
+            $this->data['file_ids'] =
+            array_diff($this->data['file_ids'], array($fileObj->id));
         }
 
         return $this;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function delete($id)
-    {
-        return $this->klass->_deleteResource($this->namespace, $this, $id);
     }
 
     // ------------------------------------------------------------------------------
@@ -149,8 +146,23 @@ class Draft extends NylasAPIObject
     {
         $data = ($data) ? $data : $this->data;
 
-        $send_object = new Send($this->api, $this->namespace);
-        return $send_object->send($data);
+        if(array_key_exists('id', $data))
+        {
+            $resource = $this->api->_updateResource($this, $data['id'], $data);
+        }
+
+        else
+        {
+            $resource = $this->api->_createResource($this, $data);
+        }
+
+        if(!$resource || is_string($resource))
+        {
+            return $resource;
+        }
+
+        $send_object = new Models\Send($this->api);
+        return $send_object->send($resource->data);
     }
 
     // ------------------------------------------------------------------------------

@@ -2,9 +2,7 @@
 
 namespace Nylas\Models;
 
-use Nylas\Models\Message;
-use Nylas\Models\Draft;
-
+use Nylas\Models;
 use Nylas\NylasAPIObject;
 use Nylas\NylasModelCollection;
 
@@ -29,13 +27,12 @@ class Thread extends NylasAPIObject
     /**
      * Thread constructor.
      * @param $api
-     * @param $namespace
      */
-    public function __construct($api, $namespace)
+    public function __construct($api)
     {
         parent::__construct();
+
         $this->api = $api;
-        $this->namespace = $namespace;
     }
 
     // ------------------------------------------------------------------------------
@@ -46,17 +43,10 @@ class Thread extends NylasAPIObject
     public function messages()
     {
         $thread_id = $this->data['id'];
-        $namespace = $this->data['namespace_id'];
-
-        $msgObj = new Message($this, $namespace);
+        $msgObj = new Models\Message($this);
 
         return new NylasModelCollection(
-            $msgObj,
-            $this->klass,
-            $namespace,
-            array("thread_id" => $thread_id),
-            0,
-            array()
+            $msgObj, $this->klass, array("thread_id" => $thread_id)
         );
     }
 
@@ -68,14 +58,12 @@ class Thread extends NylasAPIObject
     public function drafts()
     {
         $thread_id = $this->data['id'];
-        $namespace = $this->data['namespace_id'];
-
-        $msgObj = new Draft($this, $namespace);
+        $msgObj = new Models\Draft($this);
 
         return new NylasModelCollection(
             $msgObj,
             $this->klass,
-            $namespace,
+            NULL,
             array("thread_id" => $thread_id),
             0,
             array()
@@ -197,10 +185,15 @@ class Thread extends NylasAPIObject
     private function _updateTags($add = array(), $remove = array())
     {
         $payload = array(
-            "add_tags" => $add,
+            "add_tags"    => $add,
             "remove_tags" => $remove
         );
-        return $this->api->klass->_updateResource($this->namespace, $this, $this->data['id'], $payload);
+
+        return $this->api->klass->_updateResource(
+            $this,
+            $this->data['id'],
+            $payload
+        );
     }
 
     // ------------------------------------------------------------------------------

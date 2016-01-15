@@ -14,38 +14,30 @@ class NylasAPIObject
 
     // ------------------------------------------------------------------------------
 
-    public $apiRoot;
-
-    // ------------------------------------------------------------------------------
-
-    public function __construct()
-    {
-        $this->apiRoot = 'n';
-    }
+    public $api;
+    public $data;
+    public $klass;
+    public $filter;
+    public $filters;
 
     // ------------------------------------------------------------------------------
 
     /**
-     * @return null
+     * NylasAPIObject constructor.
      */
-    public function json()
-    {
-        return $this->data;
-    }
+    public function __construct() {}
 
     // ------------------------------------------------------------------------------
 
     /**
      * @param $klass
-     * @param $namespace
-     * @param $objects
+     * @param $data
      * @return $this
      */
-    public function _createObject($klass, $namespace, $objects)
+    public function _createObject($klass, $data)
     {
-        $this->data = $objects;
+        $this->data  = $data;
         $this->klass = $klass;
-        $this->namespace = $namespace;
 
         return $this;
     }
@@ -62,6 +54,7 @@ class NylasAPIObject
         {
             return $this->data[$key];
         }
+
         return NULL;
     }
 

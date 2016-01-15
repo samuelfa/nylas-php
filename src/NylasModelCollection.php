@@ -16,29 +16,27 @@ class NylasModelCollection
 
     private $chunkSize = 50;
 
-    /** @var NylasAPIObject */
-    private $klass;
-
-    /** @var Nylas */
-    private $api;
-
     // ------------------------------------------------------------------------------
 
     /**
      * @param NylasAPIObject $klass
-     * @param Nylas $api
-     * @param \Nylas\Models\Account|null $namespace
+     * @param $api
      * @param array $filter
      * @param int $offset
      * @param array $filters
      */
-    public function __construct($klass, $api, $namespace = NULL, $filter = array(), $offset = 0, $filters = array())
+    public function __construct(
+        $klass,
+        $api,
+        $filter    = array(),
+        $offset    = 0,
+        $filters   = array()
+    )
     {
-        $this->klass = $klass;
-        $this->api = $api;
-        $this->namespace = $namespace;
-        $this->filter = $filter;
-        $this->filters = $filters;
+        $this->api       = $api;
+        $this->klass     = $klass;
+        $this->filter    = $filter;
+        $this->filters   = $filters;
 
         if (!array_key_exists('offset', $filter))
         {
@@ -88,6 +86,20 @@ class NylasModelCollection
     // ------------------------------------------------------------------------------
 
     /**
+     * get part of datas from $offset till $limit
+     *
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
+    public function part($offset=0, $limit=50)
+    {
+        return $this->_range($offset, $limit);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * @param $limit
      * @return array
      */
@@ -100,13 +112,11 @@ class NylasModelCollection
 
     /**
      * @param $filter
-     * @param array $filters
      * @return NylasModelCollection
      */
-    public function where($filter, $filters = array())
+    public function where($filter)
     {
         $this->filter = array_merge($this->filter, $filter);
-        $this->filter['offset'] = 0;
 
         $collection = clone $this;
         $collection->filter = $this->filter;
@@ -133,7 +143,7 @@ class NylasModelCollection
      */
     public function create($data)
     {
-        return $this->klass->create($data);
+        return $this->klass->create($data, $this);
     }
 
     // ------------------------------------------------------------------------------
@@ -161,7 +171,8 @@ class NylasModelCollection
         while (count($result) < $limit)
         {
             $to_fetch = min($limit - count($result), $this->chunkSize);
-            $data = $this->_getModelCollection($offset + count($result), $to_fetch);
+
+            $data   = $this->_getModelCollection($offset + count($result), $to_fetch);
             $result = array_merge($result, $data);
 
             if (!$data || count($data) < $to_fetch)
@@ -182,7 +193,7 @@ class NylasModelCollection
     private function _getModel($id)
     {
         // make filter a kwarg filters
-        return $this->api->getResource($this->namespace, $this->klass, $id, $this->filter);
+        return $this->api->getResource($this->klass, $id, $this->filter);
     }
 
     // ------------------------------------------------------------------------------
@@ -195,9 +206,9 @@ class NylasModelCollection
     private function _getModelCollection($offset, $limit)
     {
         $this->filter['offset'] = $offset;
-        $this->filter['limit'] = $limit;
+        $this->filter['limit']  = $limit;
 
-        return $this->api->getResources($this->namespace, $this->klass, $this->filter);
+        return $this->api->getResources($this->klass, $this->filter);
     }
 
     // ------------------------------------------------------------------------------
