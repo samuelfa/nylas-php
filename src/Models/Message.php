@@ -11,7 +11,7 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2016-01-19
  */
 class Message extends NylasAPIObject
 {
@@ -32,6 +32,65 @@ class Message extends NylasAPIObject
         parent::__construct();
 
         $this->api = $api;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * mark star to message id
+     *
+     * @param       $id
+     * @param  bool $starred
+     * @return mixed
+     */
+    public function starred($id, $starred = true)
+    {
+        $data = ['starred' => $starred];
+
+        return $this->api->_updateResource($this, $id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * mark unread status to message id
+     *
+     * @param      $id
+     * @param bool $unread
+     * @return mixed
+     */
+    public function unread($id, $unread = false)
+    {
+        $data = ['unread' => $unread];
+
+        return $this->api->_updateResource($this, $id, $data);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * move a message to folder
+     *
+     * @param  $id
+     * @param  $target_id
+     * @param  $type  'folder|label'
+     * @return mixed
+     */
+    public function move($id, $target_id, $type = 'folder')
+    {
+        // move message to a folder
+        if($type == 'folder')
+        {
+            $data = ['folder_id' => $target_id];
+        }
+
+        // move message to a label
+        else
+        {
+            $data = ['label_ids' => [$target_id]];
+        }
+
+        return $this->api->_updateResource($this, $id, $data);
     }
 
     // ------------------------------------------------------------------------------

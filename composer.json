@@ -9,7 +9,7 @@
           "email": "kartik@kartikt.com"
         }
     ],
-    "minimum-stability": "1.1.0.0",
+    "minimum-stability": "1.1.1.0",
     "require": {
         "php": ">=5.4",
         "guzzlehttp/guzzle": "~6.0"

@@ -348,6 +348,12 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get threads collection handle
+     *
+     * @info   if you want call method in thread model directly,
+     *         you can use like this
+     *         client_object->threads()->klass->method_in_thread_model();
+     *
      * @return NylasModelCollection
      */
     public function threads()
@@ -359,6 +365,12 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get messages collection handle
+     *
+     * @info   if you want call method in message model directly,
+     *         you can use like this
+     *         client_object->messages()->klass->method_in_message_model();
+     *
      * @return NylasModelCollection
      */
     public function messages()
@@ -370,6 +382,12 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get drafts collection handle
+     *
+     * @info   if you want call method in draft model directly,
+     *         you can use like this
+     *         client_object->drafts()->klass->method_in_draft_model();
+     *
      * @return NylasModelCollection
      */
     public function drafts()
@@ -380,6 +398,15 @@ class Nylas
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * get labels collection handle
+     *
+     * @info   if you want call method in label model directly,
+     *         you can use like this
+     *         client_object->labels()->klass->method_in_label_model();
+     *
+     * @return \Nylas\NylasModelCollection
+     */
     public function labels()
     {
         $msgObj = new Models\Label($this);
@@ -389,6 +416,12 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get files collection handle
+     *
+     * @info   if you want call method in file model directly,
+     *         you can use like this
+     *         client_object->files()->klass->method_in_file_model();
+     *
      * @return NylasModelCollection
      */
     public function files()
@@ -400,6 +433,12 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get contacts collection handle
+     *
+     * @info   if you want call method in contact model directly,
+     *         you can use like this
+     *         client_object->contacts()->klass->method_in_contact_model();
+     *
      * @return NylasModelCollection
      */
     public function contacts()
@@ -411,6 +450,12 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get calendars collection handle
+     *
+     * @info   if you want call method in calendars model directly,
+     *         you can use like this
+     *         client_object->calendars()->klass->method_in_calendar_model();
+     *
      * @return NylasModelCollection
      */
     public function calendars()
@@ -422,6 +467,12 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get events collection handle
+     *
+     * @info   if you want call method in event model directly,
+     *         you can use like this
+     *         client_object->events()->klass->method_in_event_model();
+     *
      * @return NylasModelCollection
      */
     public function events()
@@ -615,8 +666,8 @@ class Nylas
         try
         {
             $response =
-                $this->apiClient->put($url, $payload)
-                    ->getBody()->getContents();
+            $this->apiClient->put($url, $payload)
+            ->getBody()->getContents();
         }
 
         catch (GuzzleHttp\Exception\RequestException $e)
