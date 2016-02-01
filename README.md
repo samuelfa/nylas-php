@@ -25,7 +25,7 @@ You can install my fork library by add the following repository to your recompos
 And then run following command in CLI
 
 ```php
-composer require "nylas/nylas-php:1.1.0.0"
+composer require "nylas/nylas-php:1.1.1.0"
 ```
 
 
@@ -114,33 +114,14 @@ foreach($thead->participants as $participant)
     echo $participant->name;
 }
 
-// Mark as Read
-$thread->markAsRead();
+// Unread or Read
+$thread->unread($id, $unread = false);
 
-// Mark as Seen
-$thread->markAsSeen();
-
-// Archive
-$thread->archive();
-
-// Unarchive
-$thread->unarchive();
-
-// Trash
-$thread->trash();
+// Move to folder
+$thread->move($id, $target_id, $type = 'folder');
 
 // Star
-$thread->star();
-
-// Unstar
-$thread->unstar();
-
-// Add or remove arbitrary tags
-$to_add = array('cfa1233ef123acd12');
-$to_remove = array('inbox');
-
-$thread->addTags($to_add);
-$thread->removeTags($to_remove);
+$thread->starred($id, $starred = true);
 
 // Listing messages
 foreach($thread->messages()->items() as $message)

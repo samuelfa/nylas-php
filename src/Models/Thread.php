@@ -13,7 +13,7 @@ use Nylas\NylasModelCollection;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2016-01-19
  */
 class Thread extends NylasAPIObject
 {
@@ -86,114 +86,60 @@ class Thread extends NylasAPIObject
     // ------------------------------------------------------------------------------
 
     /**
-     * @param $tags
+     * mark star to thread id
+     *
+     * @param       $id
+     * @param  bool $starred
      * @return mixed
      */
-    public function addTags($tags)
+    public function starred($id, $starred = true)
     {
-        return $this->_updateTags($tags);
+        $data = ['starred' => $starred];
+
+        return $this->api->_updateResource($this, $id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * @param $tags
+     * mark unread status to thread id
+     *
+     * @param      $id
+     * @param bool $unread
      * @return mixed
      */
-    public function removeTags($tags)
+    public function unread($id, $unread = false)
     {
-        return $this->_updateTags(array(), $tags);
+        $data = ['unread' => $unread];
+
+        return $this->api->_updateResource($this, $id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
+     * move a thread to trash
+     *
+     * @param  $id
+     * @param  $target_id
+     * @param  $type  'folder|label'
      * @return mixed
      */
-    public function markAsRead()
+    public function move($id, $target_id, $type = 'folder')
     {
-        return $this->_updateTags(array(), array('unread'));
-    }
+        // move message to a folder
+        if($type == 'folder')
+        {
+            $data = ['folder_id' => $target_id];
+        }
 
-    // ------------------------------------------------------------------------------
+        // move message to a label
+        else
+        {
+            $data = ['label_ids' => [$target_id]];
+        }
 
-    /**
-     * @return mixed
-     */
-    public function markAsSeen()
-    {
-        return $this->_updateTags(array(), array('unseen'));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @return mixed
-     */
-    public function archive()
-    {
-        return $this->_updateTags(array('archive'), array('inbox'));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @return mixed
-     */
-    public function unarchive()
-    {
-        return $this->_updateTags(array('inbox'), array('archive'));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @return mixed
-     */
-    public function trash()
-    {
-        return $this->_updateTags(array('trash'), array());
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @return mixed
-     */
-    public function star()
-    {
-        return $this->_updateTags(array('starred'), array());
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @return mixed
-     */
-    public function unstar()
-    {
-        return $this->_updateTags(array(), array('starred'));
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @param array $add
-     * @param array $remove
-     * @return mixed
-     */
-    private function _updateTags($add = array(), $remove = array())
-    {
-        $payload = array(
-            "add_tags"    => $add,
-            "remove_tags" => $remove
-        );
-
-        return $this->api->klass->_updateResource(
-            $this,
-            $this->data['id'],
-            $payload
-        );
+        return $this->api->_updateResource($this, $id, $data);
     }
 
     // ------------------------------------------------------------------------------
