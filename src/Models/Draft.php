@@ -12,7 +12,7 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2016-03-02
  */
 class Draft extends NylasAPIObject
 {
@@ -132,6 +132,28 @@ class Draft extends NylasAPIObject
         }
 
         return $this;
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * create or update draft only, not send directly
+     *
+     * $client->create($data)->seve();
+     *
+     * @param null $data
+     * @return mixed
+     */
+    public function save($data = NULL)
+    {
+        $data = ($data) ? $data : $this->data;
+
+        if(array_key_exists('id', $data))
+        {
+            return $this->api->_updateResource($this, $data['id'], $data);
+        }
+
+        return $this->api->_createResource($this, $data);
     }
 
     // ------------------------------------------------------------------------------
