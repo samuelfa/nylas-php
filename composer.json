@@ -1,17 +1,20 @@
 {
-    "name": "nylas/nylas-php",
-    "description": "PHP wrapper for the Nylas API",
+    "name": "lanlin/nylas-php",
+    "description": "PHP wrapper for the Nylas API (Adapted for lanlin).",
     "license": "MIT",
-    "copyright": "Nylas 2016",
     "authors" : [
         {
           "name": "Kartik Talwar",
           "email": "kartik@kartikt.com"
+        },
+        {
+          "name": "lanlin",
+          "email": "lanlin1987@gmail.com"
         }
     ],
     "minimum-stability": "1.1.1.1",
     "require": {
-        "php": ">=5.4",
+        "php": ">=7.0",
         "guzzlehttp/guzzle": "~6.0"
     },
     "autoload": {
