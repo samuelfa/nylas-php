@@ -11,21 +11,10 @@ Be care, there maybe has some bugs that i have not found yet.
 
 ## Installation
 
-You can install my fork library by add the following repository to your recomposer.json
-
-```json
-"repositories": [
-    {
-        "type": "git",
-        "url": "https://github.com/lanlin/nylas-php.git"
-    }
-]
-```
-
-And then run following command in CLI
+You can install my fork library with composer.
 
 ```php
-composer require "nylas/nylas-php:1.1.1.0"
+composer require "lanlin/nylas-php"
 ```
 
 
