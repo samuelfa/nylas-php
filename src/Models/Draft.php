@@ -1,9 +1,7 @@
-<?php
-
-namespace Nylas\Models;
+<?php namespace Nylas\Models;
 
 use Nylas\Models;
-use Nylas\NylasAPIObject;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -12,18 +10,22 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2016-03-02
+ * @change 2017-11-12
  */
-class Draft extends NylasAPIObject
+class Draft extends Model
 {
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @var string
+     */
     public $collectionName = 'drafts';
 
     // ------------------------------------------------------------------------------
 
-    public $attrs = array(
+    public $attrs =
+    [
         'id',
         'subject',
         'to',
@@ -36,30 +38,20 @@ class Draft extends NylasAPIObject
         'file_ids',
         'version',
         'reply_to_message_id'
-    );
+    ];
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Draft constructor.
+     * create draft
      *
-     * @param $api
-     */
-    public function __construct($api)
-    {
-        parent::__construct();
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
      * @param $data
-     * @param $api
-     * @return mixed
+     * @return Models\Draft
      */
-    public function create($data, $api)
+    public function create($data)
     {
-        $sanitized = array();
+        $sanitized = [];
+
         foreach ($this->attrs as $attr)
         {
             if (array_key_exists($attr, $data))
@@ -68,7 +60,6 @@ class Draft extends NylasAPIObject
             }
         }
 
-        $this->api  = $api->api;
         $this->data = $sanitized;
 
         return $this;
@@ -77,8 +68,10 @@ class Draft extends NylasAPIObject
     // ------------------------------------------------------------------------------
 
     /**
+     * update draft
+     *
      * @param $data
-     * @return mixed
+     * @return Models\Draft
      */
     public function update($data)
     {
@@ -100,8 +93,10 @@ class Draft extends NylasAPIObject
     // ------------------------------------------------------------------------------
 
     /**
+     * attach file
+     *
      * @param $fileObj
-     * @return $this
+     * @return Models\Draft
      */
     public function attach($fileObj)
     {
@@ -111,7 +106,7 @@ class Draft extends NylasAPIObject
         }
         else
         {
-            $this->data['file_ids'] = array($fileObj->id);
+            $this->data['file_ids'] = [$fileObj->id];
         }
 
         return $this;
@@ -120,15 +115,17 @@ class Draft extends NylasAPIObject
     // ------------------------------------------------------------------------------
 
     /**
+     * detach file
+     *
      * @param $fileObj
-     * @return $this
+     * @return Models\Draft
      */
     public function detach($fileObj)
     {
         if (in_array($fileObj->id, $this->data['file_ids']))
         {
             $this->data['file_ids'] =
-            array_diff($this->data['file_ids'], array($fileObj->id));
+            array_diff($this->data['file_ids'], [$fileObj->id]);
         }
 
         return $this;
@@ -139,21 +136,21 @@ class Draft extends NylasAPIObject
     /**
      * create or update draft only, not send directly
      *
-     * $client->create($data)->seve();
+     * $client->create($data)->save();
      *
      * @param null $data
      * @return mixed
      */
-    public function save($data = NULL)
+    public function save($data = null)
     {
         $data = ($data) ? $data : $this->data;
 
         if(array_key_exists('id', $data))
         {
-            return $this->api->_updateResource($this, $data['id'], $data);
+            return $this->updateResource($data['id'], $data);
         }
 
-        return $this->api->_createResource($this, $data);
+        return $this->createResource($data);
     }
 
     // ------------------------------------------------------------------------------
@@ -164,18 +161,18 @@ class Draft extends NylasAPIObject
      * @param null $data
      * @return mixed
      */
-    public function send($data = NULL)
+    public function send($data = null)
     {
         $data = ($data) ? $data : $this->data;
 
         if(array_key_exists('id', $data))
         {
-            $resource = $this->api->_updateResource($this, $data['id'], $data);
+            $resource = $this->updateResource($data['id'], $data);
         }
 
         else
         {
-            $resource = $this->api->_createResource($this, $data);
+            $resource = $this->createResource($data);
         }
 
         if(!$resource || is_string($resource))
@@ -183,8 +180,20 @@ class Draft extends NylasAPIObject
             return $resource;
         }
 
-        $send_object = new Models\Send($this->api);
-        return $send_object->send($resource->data);
+        $options =
+        [
+            'token'      => $this->apiToken,
+            'debug'      => $this->apiDebug,
+            'app_id'     => $this->appID,
+            'app_secret' => $this->appSecret,
+            'app_server' => $this->apiServer
+        ];
+
+        $send = new Models\Send($options);
+
+        $send->collectionName = $this->collectionName;
+
+        return $send->send($resource->data);
     }
 
     // ------------------------------------------------------------------------------

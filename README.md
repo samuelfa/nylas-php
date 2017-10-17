@@ -31,16 +31,30 @@ For more information about authenticating with Nylas, visit the [Developer Docum
 
 In practice, the Nylas REST API client simplifies this down to two steps.
 
+## Options Parameters
+
+```php
+$OPTIONS =
+[
+    'app_id'     => 'your app id',
+    'app_secret' => 'your app secret',
+    'app_server' => 'default https://api.nylas.com/',
+
+    'token'      => 'token',
+    'debug'      => 'true or false',
+];
+```
+
 ## Auth
 
 **index.php**
 
 ```php
-$client = new Nylas(CLIENT, SECRET);
+$client = new Nylas($OPTIONS);
 
 $redirect_url = 'http://localhost:8080/login_callback.php';
 
-$get_auth_url = $client->createAuthURL($redirect_url);
+$get_auth_url = $client->oauth($OPTIONS)->createAuthURL($redirect_url);
 
 // redirect to Nylas auth server
 header("Location: ".$get_auth_url);
@@ -51,9 +65,9 @@ header("Location: ".$get_auth_url);
 ```php
 $access_code = $_GET['code'];
 
-$client = new Nylas(CLIENT, SECRET);
+$client = new Nylas($OPTIONS);
 
-$get_token = $client->getAuthToken($access_code);
+$get_token = $client->oauth($OPTIONS)->getAuthToken($access_code);
 
 // save token in session
 $_SESSION['access_token'] = $get_token;
@@ -64,18 +78,18 @@ $_SESSION['access_token'] = $get_token;
 
 ```php
 // init client!
-$client = new Nylas(CLIENT, SECRET, TOKEN);
+$client = new Nylas($OPTIONS);
 
 // Fetch the first thread
-$first_thread = $client->threads()->first();
+$first_thread = $client->threads($OPTIONS)->first();
 
 echo $first_thread->id;
 
 // Fetch first 2 latest threads
-$two_threads = $client->threads()->all(2);
+$two_threads = $client->threads($OPTIONS)->all(2);
 
 // Fetch threads from offset 30, and limit 50
-$part_threads = $client->threads()->part(30, 50);
+$part_threads = $client->threads($OPTIONS)->part(30, 50);
 
 foreach($two_threads as $thread)
 {
@@ -85,7 +99,7 @@ foreach($two_threads as $thread)
 // List all threads with 'ben@nylas.com'
 $search_criteria = array("any_email" => "ben@nylas.com");
 
-$get_threads = $client->threads()->where($search_criteria)->items()
+$get_threads = $client->threads($OPTIONS)->where($search_criteria)->items()
 
 foreach($get_threads as $thread)
 {
@@ -124,11 +138,11 @@ foreach($thread->messages()->items() as $message)
 
 
 ```php
-$client = new Nylas(CLIENT, SECRET, TOKEN);
+$client = new Nylas($OPTIONS);
 
 $file_path = '/var/my/folder/test_file.pdf';
 
-$upload_resp = $client->files()->create($file_path);
+$upload_resp = $client->files($OPTIONS)->create($file_path);
 
 echo $upload_resp->id;
 ```
@@ -136,7 +150,7 @@ echo $upload_resp->id;
 ## Working with Drafts
 
 ```php
-$client = new Nylas(CLIENT, SECRET, TOKEN);
+$client = new Nylas($OPTIONS);
 
 $message =
 [
@@ -149,7 +163,7 @@ $message =
      "body"    => "Test <br> message"
 ];
 
-$draft = $client->drafts()->create($message_obj);
+$draft = $client->drafts($OPTIONS)->create($message_obj);
 
 $send_message = $draft->send( ['id' => $draft->id] );
 
@@ -161,7 +175,7 @@ echo $send_message->id;
 Carefully, send directly is diffrent from create a draft and then send it above.
 
 ```php
-$client = new Nylas(CLIENT, SECRET, TOKEN);
+$client = new Nylas($OPTIONS);
 
 $message =
 [
@@ -174,15 +188,15 @@ $message =
      "body"    => "Test <br> message"
 ];
 
-$draft = $client->drafts()->send($message_obj);
+$draft = $client->drafts($OPTIONS)->send($message_obj);
 ```
 
 ## Working with Events
 
 ```php
-$client = new Nylas(CLIENT, SECRET, TOKEN);
+$client = new Nylas($OPTIONS);
 
-$calendars = $client->calendars()->all();
+$calendars = $client->calendars($OPTIONS)->all();
 
 $calendar = null;
 
@@ -202,7 +216,7 @@ $calendar_data =
 ];
 
 // create event
-$event = $client->events()->create($calendar_data);
+$event = $client->events($OPTIONS)->create($calendar_data);
 
 echo $event->id;
 
@@ -213,9 +227,15 @@ $event = $event->update(array("location" => "Meeting room #1"));
 $event->delete();
 
 // delete event (alternate)
-$remove = $client->events()->find($event->id)->delete();
+$remove = $client->events($OPTIONS)->find($event->id)->delete();
 ```
 
+## Webhooks Signature Verification
+
+```php
+$client = new Nylas($OPTIONS);
+$is_valid = $client->xSignatureVerification($code, $data, $app_secret)
+```
 
 ## End
 

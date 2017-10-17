@@ -1,8 +1,6 @@
-<?php
+<?php namespace Nylas\Models;
 
-namespace Nylas\Models;
-
-use Nylas\NylasAPIObject;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,65 +9,60 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2017-10-12
  */
-class File extends NylasAPIObject
+class File extends Model
 {
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @var string
+     */
     public $collectionName = 'files';
 
     // ------------------------------------------------------------------------------
 
     /**
-     * File constructor.
-     *
-     * @param $api
+     * @param $fileName
+     * @return \Nylas\Models\File
      */
-    public function __construct($api)
+    public function create($fileName)
     {
-        parent::__construct();
+        $payload =
+        [
+            'name'     => 'file',
+            'filename' => basename($fileName),
+            'contents' => fopen($fileName, 'r')
+        ];
 
-        $this->api = $api;
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
-     * @param $file_name
-     * @return $this
-     */
-    public function create($file_name)
-    {
-        $payload = array(
-            "name"     => "file",
-            "filename" => basename($file_name),
-            "contents" => fopen($file_name, 'r')
-        );
-
-        $upload = $this->api->_createResource($this, $payload);
+        $upload = $this->createResource($payload);
         $data   = $upload->data[0];
 
         $this->data = $data;
+
         return $this;
     }
 
     // ------------------------------------------------------------------------------
 
     /**
+     * @link https://docs.nylas.com/v1.0/reference#filesiddownload
+     * @param string $fileId
      * @return string
+     * @throws \Exception
      */
-    public function download()
+    public function download(string $fileId = null)
     {
-        $resource =
-            $this->klass->getResourceData(
-                $this,
-                $this->data['id'],
-                array('extra' => 'download')
-            );
+        $id = $fileId ?? $this->data['id'];
 
-        $data = '';
+        if (!$id)
+        {
+            throw new \Exception('File id is required!');
+        }
+
+        $data     = '';
+        $resource = $this->getResourceData($this->data['id'], ['extra' => 'download']);
 
         while (!$resource->eof())
         {
