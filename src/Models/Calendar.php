@@ -1,10 +1,7 @@
-<?php
-
-namespace Nylas\Models;
+<?php namespace Nylas\Models;
 
 use Nylas\Models;
-use Nylas\NylasAPIObject;
-use Nylas\NylasModelCollection;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,38 +10,52 @@ use Nylas\NylasModelCollection;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2017-10-12
  */
-class Calendar extends NylasAPIObject
+class Calendar extends Model
 {
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @var string
+     */
     public $collectionName = 'calendars';
 
     // ------------------------------------------------------------------------------
 
     /**
-     * Calendar constructor.
+     * get events
+     *
+     * @param string $calendarId
+     * @return Models\Event
+     * @throws \Exception
      */
-    public function __construct()
+    public function events(string $calendarId = null)
     {
-        parent::__construct();
-    }
+        $options =
+        [
+            'token'      => $this->apiToken,
+            'debug'      => $this->apiDebug,
+            'app_id'     => $this->appID,
+            'app_secret' => $this->appSecret,
+            'app_server' => $this->apiServer
+        ];
 
-    // ------------------------------------------------------------------------------
+        $event = new Models\Event($options);
 
-    /**
-     * @return NylasModelCollection
-     */
-    public function events()
-    {
-        $calendar_id = $this->data['id'];
-        $msgObj = new Models\Event($this);
+        $event->collectionName = $this->collectionName;
 
-        return new NylasModelCollection(
-            $msgObj, $this->klass, array("calendar_id" => $calendar_id)
-        );
+        $id = $calendarId ?? $this->data['id'];
+
+        if (!$id)
+        {
+            throw new \Exception('Calendar id is required!');
+        }
+
+        $event->where(['calendar_id' => $this->data['id']]);
+
+        return $event;
     }
 
     // ------------------------------------------------------------------------------

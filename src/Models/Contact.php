@@ -1,8 +1,6 @@
-<?php
+<?php namespace Nylas\Models;
 
-namespace Nylas\Models;
-
-use Nylas\NylasAPIObject;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,26 +9,18 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2017-10-12
  */
-class Contact extends NylasAPIObject
+class Contact extends Model
 {
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @var string
+     */
     public $collectionName = 'contacts';
 
     // ------------------------------------------------------------------------------
 
-    /**
-     * Contact constructor.
-     *
-     * @param $api
-     */
-    public function __construct($api)
-    {
-        parent::__construct();
-    }
-
-    // ------------------------------------------------------------------------------
 }

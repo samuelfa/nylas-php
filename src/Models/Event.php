@@ -1,8 +1,6 @@
-<?php
+<?php namespace Nylas\Models;
 
-namespace Nylas\Models;
-
-use Nylas\NylasAPIObject;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,59 +9,51 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-11-06
+ * @change 2017-10-12
  */
-class Event extends NylasAPIObject
+class Event extends Model
 {
 
     // ------------------------------------------------------------------------------
 
+    /**
+     * @var string
+     */
     public $collectionName = 'events';
 
     // ------------------------------------------------------------------------------
 
-    public $attrs = array(
-        "id",
-        "namespace_id",
-        "title",
-        "description",
-        "location",
-        "read_only",
-        "when",
-        "busy",
-        "participants",
-        "calendar_id",
-        "recurrence",
-        "status",
-        "master_event_id",
-        "original_start_time"
-    );
-
-    // ------------------------------------------------------------------------------
-
     /**
-     * Event constructor.
-     *
-     * @param $api
+     * @var array
      */
-    public function __construct($api)
-    {
-        parent::__construct();
-
-        $this->api = $api;
-    }
+    public $attrs =
+    [
+        'id',
+        'namespace_id',
+        'title',
+        'description',
+        'location',
+        'read_only',
+        'when',
+        'busy',
+        'participants',
+        'calendar_id',
+        'recurrence',
+        'status',
+        'master_event_id',
+        'original_start_time'
+    ];
 
     // ------------------------------------------------------------------------------
 
     /**
      * @param $data
-     * @param $api
      * @return mixed
      * @throws \Exception
      */
-    public function create($data, $api = NULL)
+    public function create($data)
     {
-        $sanitized = array();
+        $sanitized = [];
         foreach ($this->attrs as $attr)
         {
             if (array_key_exists($attr, $data))
@@ -72,38 +62,34 @@ class Event extends NylasAPIObject
             }
         }
 
-        if(!$api) { $api = $this->api->klass; }
-
-        else { $api = $api->api; }
-
-
         if (!array_key_exists('calendar_id', $sanitized))
         {
-            if ($this->api->collectionName == 'calendars')
+            if ($this->collectionName === 'calendars')
             {
-                $sanitized['calendar_id'] = $this->api->id;
+                $sanitized['calendar_id'] = $this->data['id'];
             }
             else
             {
-                throw new \Exception("Missing calendar_id", 1);
+                throw new \Exception('Missing calendar_id', 1);
             }
         }
 
-        $this->api  = $api;
         $this->data = $sanitized;
 
-        return $this->api->_createResource($this, $this->data);
+        return $this->createResource($this->data);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
      * @param $data
+     * @param string $eventId
      * @return mixed
+     * @throws \Exception
      */
-    public function update($data)
+    public function update($data, string $eventId = null)
     {
-        $sanitized = array();
+        $sanitized = [];
 
         foreach ($this->attrs as $attr)
         {
@@ -113,17 +99,33 @@ class Event extends NylasAPIObject
             }
         }
 
-        return $this->api->_updateResource($this, $this->id, $sanitized);
+        $id = $eventId ?? $this->data['id'];
+
+        if (!$id)
+        {
+            throw new \Exception('Event id is required!');
+        }
+
+        return $this->updateResource($id, $sanitized);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
+     * @param string $eventId
      * @return mixed
+     * @throws \Exception
      */
-    public function delete()
+    public function delete(string $eventId = null)
     {
-        return $this->klass->_deleteResource($this, $this->id);
+        $id = $eventId ?? $this->data['id'];
+
+        if (!$id)
+        {
+            throw new \Exception('Event id is required!');
+        }
+
+        return $this->deleteResource($this->data['id']);
     }
 
     // ------------------------------------------------------------------------------

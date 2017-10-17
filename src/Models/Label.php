@@ -1,8 +1,6 @@
-<?php
+<?php namespace Nylas\Models;
 
-namespace Nylas\Models;
-
-use Nylas\NylasAPIObject;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,26 +9,17 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2015-12-28
+ * @change 2017-10-12
  */
-class Label extends NylasAPIObject
+class Label extends Model
 {
 
     // ------------------------------------------------------------------------------
 
-    public $collectionName = 'labels';
-
-    // ------------------------------------------------------------------------------
-
     /**
-     * Label constructor.
-     *
-     * @param $api
+     * @var string
      */
-    public function __construct($api)
-    {
-        parent::__construct();
-    }
+    public $collectionName = 'labels';
 
     // ------------------------------------------------------------------------------
 

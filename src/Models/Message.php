@@ -1,8 +1,6 @@
-<?php
+<?php namespace Nylas\Models;
 
-namespace Nylas\Models;
-
-use Nylas\NylasAPIObject;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -11,28 +9,17 @@ use Nylas\NylasAPIObject;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2016-01-19
+ * @change 2017-10-12
  */
-class Message extends NylasAPIObject
+class Message extends Model
 {
 
     // ------------------------------------------------------------------------------
 
-    public $collectionName = 'messages';
-
-    // ------------------------------------------------------------------------------
-
     /**
-     * Message constructor.
-     *
-     * @param $api
+     * @var string
      */
-    public function __construct($api)
-    {
-        parent::__construct();
-
-        $this->api = $api;
-    }
+    public $collectionName = 'messages';
 
     // ------------------------------------------------------------------------------
 
@@ -47,7 +34,7 @@ class Message extends NylasAPIObject
     {
         $data = ['starred' => $starred];
 
-        return $this->api->_updateResource($this, $id, $data);
+        return $this->updateResource($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -63,7 +50,7 @@ class Message extends NylasAPIObject
     {
         $data = ['unread' => $unread];
 
-        return $this->api->_updateResource($this, $id, $data);
+        return $this->updateResource($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -90,25 +77,29 @@ class Message extends NylasAPIObject
             $data = ['label_ids' => [$target_id]];
         }
 
-        return $this->api->_updateResource($this, $id, $data);
+        return $this->updateResource($id, $data);
     }
 
     // ------------------------------------------------------------------------------
 
     /**
+     * @param string $msgId
      * @return null|string
+     * @throws \Exception
      */
-    public function raw()
+    public function raw(string $msgId = null)
     {
-        $data = '';
-        $headers = array('Accept' => 'message/rfc822');
+        $data    = '';
+        $headers = ['Accept' => 'message/rfc822'];
 
-        $resource =
-        $this->klass->getResourceData(
-            $this,
-            $this->data['id'],
-            array('headers' => $headers)
-        );
+        $id = $msgId ?? $this->data['id'];
+
+        if (!$id)
+        {
+            throw new \Exception('Event id is required!');
+        }
+
+        $resource = $this->getResourceData($id, ['headers' => $headers]);
 
         while (!$resource->eof())
         {

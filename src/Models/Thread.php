@@ -1,10 +1,7 @@
-<?php
-
-namespace Nylas\Models;
+<?php namespace Nylas\Models;
 
 use Nylas\Models;
-use Nylas\NylasAPIObject;
-use Nylas\NylasModelCollection;
+use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
@@ -13,9 +10,9 @@ use Nylas\NylasModelCollection;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2016-01-19
+ * @change 2017-10-12
  */
-class Thread extends NylasAPIObject
+class Thread extends Model
 {
 
     // ------------------------------------------------------------------------------
@@ -25,62 +22,92 @@ class Thread extends NylasAPIObject
     // ------------------------------------------------------------------------------
 
     /**
-     * Thread constructor.
-     * @param $api
+     * @param string $threadId
+     * @return Model
+     * @throws \Exception
      */
-    public function __construct($api)
+    public function messages(string $threadId = null)
     {
-        parent::__construct();
+        $options =
+        [
+            'token'      => $this->apiToken,
+            'debug'      => $this->apiDebug,
+            'app_id'     => $this->appID,
+            'app_secret' => $this->appSecret,
+            'app_server' => $this->apiServer
+        ];
 
-        $this->api = $api;
+        $msg = new Models\Message($options);
+
+        $msg->collectionName = $this->collectionName;
+
+        $id = $threadId ?? $this->data['id'];
+
+        if (!$id)
+        {
+            throw new \Exception('Thread id is required!');
+        }
+
+        $msg->where(['thread_id' => $id]);
+
+        return $msg;
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * @return NylasModelCollection
+     * @param string $threadId
+     * @return Models\Draft
+     * @throws \Exception
      */
-    public function messages()
+    public function drafts(string $threadId = null)
     {
-        $thread_id = $this->data['id'];
-        $msgObj = new Models\Message($this);
+        $options =
+        [
+            'token'      => $this->apiToken,
+            'debug'      => $this->apiDebug,
+            'app_id'     => $this->appID,
+            'app_secret' => $this->appSecret,
+            'app_server' => $this->apiServer
+        ];
 
-        return new NylasModelCollection(
-            $msgObj, $this->klass, array("thread_id" => $thread_id)
-        );
+        $draft = new Models\Draft($options);
+
+        $draft->collectionName = $this->collectionName;
+
+        $id = $threadId ?? $this->data['id'];
+
+        if (!$id)
+        {
+            throw new \Exception('Thread id is required!');
+        }
+
+        $draft->where(['thread_id' => $this->data['id']]);
+
+        return $draft;
     }
 
     // ------------------------------------------------------------------------------
 
     /**
-     * @return NylasModelCollection
-     */
-    public function drafts()
-    {
-        $thread_id = $this->data['id'];
-        $msgObj = new Models\Draft($this);
-
-        return new NylasModelCollection(
-            $msgObj,
-            $this->klass,
-            NULL,
-            array("thread_id" => $thread_id),
-            0,
-            array()
-        );
-    }
-
-    // ------------------------------------------------------------------------------
-
-    /**
+     * @param string $threadId
      * @return mixed
+     * @throws \Exception
      */
-    public function createReply()
+    public function createReply(string $threadId = null)
     {
-        return $this->drafts()->create(array(
-            "subject" => $this->data['subject'],
-            "thread_id" => $this->data['id']
-        ));
+        $id = $threadId ?? $this->data['id'];
+
+        if (!$id)
+        {
+            throw new \Exception('Thread id is required!');
+        }
+
+        return $this->drafts($threadId)->create(
+        [
+            'subject'   => $this->data['subject'],
+            'thread_id' => $id
+        ]);
     }
 
     // ------------------------------------------------------------------------------
@@ -96,7 +123,7 @@ class Thread extends NylasAPIObject
     {
         $data = ['starred' => $starred];
 
-        return $this->api->_updateResource($this, $id, $data);
+        return $this->updateResource($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -112,7 +139,7 @@ class Thread extends NylasAPIObject
     {
         $data = ['unread' => $unread];
 
-        return $this->api->_updateResource($this, $id, $data);
+        return $this->updateResource($id, $data);
     }
 
     // ------------------------------------------------------------------------------
@@ -139,7 +166,7 @@ class Thread extends NylasAPIObject
             $data = ['label_ids' => [$target_id]];
         }
 
-        return $this->api->_updateResource($this, $id, $data);
+        return $this->updateResource($id, $data);
     }
 
     // ------------------------------------------------------------------------------
