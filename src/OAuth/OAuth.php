@@ -92,11 +92,14 @@ class OAuth extends Model
     /**
      * revoke a account
      *
+     * @param string $token
      * @return mixed
      * @throws \Exception
      */
-    public function revoke()
+    public function revoke(string $token)
     {
+        $this->apiToken = $token;
+
         $url = $this->apiServer . '/oauth/revoke';
 
         try
