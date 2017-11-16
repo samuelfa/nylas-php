@@ -10,7 +10,7 @@ use Nylas\Models;
  *
  * @package Nylas
  * @author lanlin
- * @change 2017-11-12
+ * @change 2017-11-16
  */
 class Nylas
 {
@@ -130,6 +130,21 @@ class Nylas
         $options = array_merge($this->options, $options ?? []);
 
         return new Models\Label($options);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
+     * get folders collection handle
+     *
+     * @param array $options
+     * @return \Nylas\Models\Folder
+     */
+    public function folders($options = null)
+    {
+        $options = array_merge($this->options, $options ?? []);
+
+        return new Models\Folder($options);
     }
 
     // ------------------------------------------------------------------------------
