@@ -4,14 +4,14 @@ use Nylas\Shims\Model;
 
 /**
  * ----------------------------------------------------------------------------------
- * Label
+ * Folder
  * ----------------------------------------------------------------------------------
  *
  * @package Nylas\Models
  * @author lanlin
  * @change 2017-11-16
  */
-class Label extends Model
+class Folder extends Model
 {
 
     // ------------------------------------------------------------------------------
@@ -19,19 +19,19 @@ class Label extends Model
     /**
      * @var string
      */
-    public $collectionName = 'labels';
+    public $collectionName = 'folders';
 
     // ------------------------------------------------------------------------------
 
     /**
-     * @param string $labelName
-     * @return \Nylas\Models\Label
+     * @param string $folderName
+     * @return \Nylas\Models\Folder
      */
-    public function create(string $labelName)
+    public function create(string $folderName)
     {
         $payload =
         [
-            'display_name' => $labelName,
+            'display_name' => $folderName,
         ];
 
         $this->data = $this->createResource($payload);
@@ -44,7 +44,7 @@ class Label extends Model
     /**
      * @param string $id
      * @param string $newName
-     * @return \Nylas\Models\Label
+     * @return \Nylas\Models\Folder
      */
     public function update(string $id, string $newName)
     {
@@ -62,7 +62,7 @@ class Label extends Model
 
     /**
      * @param string $id
-     * @return \Nylas\Models\Label
+     * @return \Nylas\Models\Folder
      */
     public function delete(string $id)
     {
