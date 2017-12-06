@@ -26,6 +26,7 @@ class File extends Model
     /**
      * @param $fileName
      * @return \Nylas\Models\File
+     * @throws \Exception
      */
     public function create($fileName)
     {

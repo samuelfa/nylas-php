@@ -23,6 +23,7 @@ class Send extends Model
     /**
      * @param array $data
      * @return mixed
+     * @throws \Exception
      */
     public function send(array $data)
     {

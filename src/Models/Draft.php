@@ -140,6 +140,7 @@ class Draft extends Model
      *
      * @param null $data
      * @return mixed
+     * @throws \Exception
      */
     public function save($data = null)
     {
@@ -160,6 +161,7 @@ class Draft extends Model
      *
      * @param null $data
      * @return mixed
+     * @throws \Exception
      */
     public function send($data = null)
     {

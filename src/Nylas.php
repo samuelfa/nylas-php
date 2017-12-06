@@ -210,6 +210,21 @@ class Nylas
     // ------------------------------------------------------------------------------
 
     /**
+     * get deltas collection handle
+     *
+     * @param array $options
+     * @return \Nylas\Models\Delta
+     */
+    public function deltas($options = null)
+    {
+        $options = array_merge($this->options, $options ?? []);
+
+        return new Models\Delta($options);
+    }
+
+    // ------------------------------------------------------------------------------
+
+    /**
      * webhook X-Nylas-Signature header verification
      *
      * @link https://docs.nylas.com/reference#receiving-notifications
