@@ -230,12 +230,25 @@ class Resource
      * create resource
      *
      * @param  $data
+     * @param array $filters
      * @return mixed
      * @throws \Exception
      */
-    public function createResource($data)
+    public function createResource($data, array $filters = [])
     {
-        $url = $this->apiServer . '/' . $this->collectionName;
+        $extra = '';
+
+        if (array_key_exists('extra', $filters))
+        {
+            $extra = $filters['extra'];
+            unset($filters['extra']);
+        }
+
+        $postfix = ($extra) ? '/' . $extra : '';
+
+        $url = $this->apiServer . '/' . $this->collectionName . $postfix;
+
+        !empty($filters) and $url = $url . '?' . http_build_query($filters);
 
         $payload = $this->createHeaders();
 
