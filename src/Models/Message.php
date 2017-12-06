@@ -29,6 +29,7 @@ class Message extends Model
      * @param       $id
      * @param  bool $starred
      * @return mixed
+     * @throws \Exception
      */
     public function starred($id, $starred = true)
     {
@@ -45,6 +46,7 @@ class Message extends Model
      * @param      $id
      * @param bool $unread
      * @return mixed
+     * @throws \Exception
      */
     public function unread($id, $unread = false)
     {
@@ -62,6 +64,7 @@ class Message extends Model
      * @param  $target_id
      * @param  $type  'folder|label'
      * @return mixed
+     * @throws \Exception
      */
     public function move($id, $target_id, $type = 'folder')
     {

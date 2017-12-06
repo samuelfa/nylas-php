@@ -26,6 +26,7 @@ class Folder extends Model
     /**
      * @param string $folderName
      * @return \Nylas\Models\Folder
+     * @throws \Exception
      */
     public function create(string $folderName)
     {
@@ -45,6 +46,7 @@ class Folder extends Model
      * @param string $id
      * @param string $newName
      * @return \Nylas\Models\Folder
+     * @throws \Exception
      */
     public function update(string $id, string $newName)
     {
@@ -63,6 +65,7 @@ class Folder extends Model
     /**
      * @param string $id
      * @return \Nylas\Models\Folder
+     * @throws \Exception
      */
     public function delete(string $id)
     {

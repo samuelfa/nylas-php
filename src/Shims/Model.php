@@ -189,6 +189,7 @@ class Model extends Resource
      * @param $offset
      * @param $limit
      * @return array
+     * @throws \Exception
      */
     protected function getModelCollection($offset, $limit)
     {

@@ -88,6 +88,7 @@ class Resource
      * @param string $id
      * @param array $filters
      * @return mixed
+     * @throws \Exception
      */
     public function getResource(string $id, array $filters)
     {

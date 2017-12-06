@@ -26,6 +26,7 @@ class Label extends Model
     /**
      * @param string $labelName
      * @return \Nylas\Models\Label
+     * @throws \Exception
      */
     public function create(string $labelName)
     {
@@ -45,6 +46,7 @@ class Label extends Model
      * @param string $id
      * @param string $newName
      * @return \Nylas\Models\Label
+     * @throws \Exception
      */
     public function update(string $id, string $newName)
     {
@@ -63,6 +65,7 @@ class Label extends Model
     /**
      * @param string $id
      * @return \Nylas\Models\Label
+     * @throws \Exception
      */
     public function delete(string $id)
     {
