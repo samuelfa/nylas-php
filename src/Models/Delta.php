@@ -36,7 +36,7 @@ class Delta extends Model
             'extra' => 'latest_cursor',
         ];
 
-        return $this->getResourceRaw(null, $filter);
+        return $this->createResource(null, $filter);
     }
 
     // ------------------------------------------------------------------------------
