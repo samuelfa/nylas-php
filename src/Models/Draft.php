@@ -193,9 +193,7 @@ class Draft extends Model
 
         $send = new Models\Send($options);
 
-        $send->collectionName = $this->collectionName;
-
-        return $send->send($resource->data);
+        return $send->send($resource);
     }
 
     // ------------------------------------------------------------------------------
