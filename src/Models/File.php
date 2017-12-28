@@ -9,7 +9,7 @@ use Nylas\Shims\Model;
  *
  * @package Nylas\Models
  * @author lanlin
- * @change 2017-10-12
+ * @change 2017-12-28
  */
 class File extends Model
 {
@@ -30,7 +30,7 @@ class File extends Model
      */
     public function create($fileName)
     {
-        $payload =
+        $payload[] =
         [
             'name'     => 'file',
             'filename' => basename($fileName),
@@ -38,9 +38,8 @@ class File extends Model
         ];
 
         $upload = $this->createResource($payload);
-        $data   = $upload->data[0];
 
-        $this->data = $data;
+        $this->data = $upload[0];
 
         return $this;
     }
@@ -63,7 +62,7 @@ class File extends Model
         }
 
         $data     = '';
-        $resource = $this->getResourceData($this->data['id'], ['extra' => 'download']);
+        $resource = $this->getResourceData($id, ['extra' => 'download']);
 
         while (!$resource->eof())
         {
