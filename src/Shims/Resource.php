@@ -328,7 +328,7 @@ class Resource
 
         // drafts delete version required
         // @link https://docs.nylas.com/reference#draftsid
-        $version AND $payload['json'] = ['version' => $version];
+        ($version !== null) AND $payload['json'] = ['version' => $version];
 
         try
         {
