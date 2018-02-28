@@ -316,14 +316,19 @@ class Resource
      * delete resource
      *
      * @param string $id
+     * @param string $version
      * @return mixed
      * @throws \Exception
      */
-    public function deleteResource($id)
+    public function deleteResource($id, $version = null)
     {
         $url = $this->apiServer . '/' . $this->collectionName . '/' . $id;
 
         $payload = $this->createHeaders();
+
+        // drafts delete version required
+        // @link https://docs.nylas.com/reference#draftsid
+        $version AND $payload['json'] = ['version' => $version];
 
         try
         {
