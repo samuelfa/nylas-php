@@ -153,23 +153,25 @@ class Thread extends Model
      * move a thread to trash
      *
      * @param  $id
-     * @param  $target_id
+     * @param  $targetId
      * @param  $type  'folder|label'
      * @return mixed
      * @throws \Exception
      */
-    public function move($id, $target_id, $type = 'folder')
+    public function move($id, $targetId, $type = 'folder')
     {
         // move message to a folder
         if($type == 'folder')
         {
-            $data = ['folder_id' => $target_id];
+            $data = ['folder_id' => $targetId];
         }
 
         // move message to a label
         else
         {
-            $data = ['label_ids' => [$target_id]];
+            $tagt = is_array($targetId) ? $targetId : [$targetId];
+
+            $data = ['label_ids' => $tagt];
         }
 
         return $this->updateResource($id, $data);
