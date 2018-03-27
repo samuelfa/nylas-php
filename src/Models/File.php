@@ -24,16 +24,17 @@ class File extends Model
     // ------------------------------------------------------------------------------
 
     /**
-     * @param $fileName
+     * @param string $fileName
+     * @param string $rename
      * @return \Nylas\Models\File
      * @throws \Exception
      */
-    public function create($fileName)
+    public function create(string $fileName, string $rename = null)
     {
         $payload[] =
         [
             'name'     => 'file',
-            'filename' => basename($fileName),
+            'filename' => basename($rename ?? $fileName),
             'contents' => fopen($fileName, 'r')
         ];
 
