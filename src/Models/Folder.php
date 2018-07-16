@@ -28,7 +28,7 @@ class Folder extends Model
      * @return \Nylas\Models\Folder
      * @throws \Exception
      */
-    public function create(string $folderName)
+    public function create($folderName)
     {
         $payload =
         [
@@ -48,7 +48,7 @@ class Folder extends Model
      * @return \Nylas\Models\Folder
      * @throws \Exception
      */
-    public function update(string $id, string $newName)
+    public function update($id, $newName)
     {
         $payload =
         [
@@ -67,7 +67,7 @@ class Folder extends Model
      * @return \Nylas\Models\Folder
      * @throws \Exception
      */
-    public function delete(string $id)
+    public function delete($id)
     {
         $this->data = $this->deleteResource($id);
 

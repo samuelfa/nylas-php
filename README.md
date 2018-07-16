@@ -3,7 +3,7 @@
 PHP bindings for the Nylas REST API [https://www.nylas.com](https://www.nylas.com)
 
 ## Modification
-I fork this project, because i find the orignial package only suport guzzle 5.
+I fork this project from lanlin/nylas-php, because i find the original package only support guzzle 5 and lanlin package only supports PHP 7.
 Now i made some change, so it can support guzzle >6.0.
 
 Be care, there maybe has some bugs that i have not found yet.
@@ -14,7 +14,7 @@ Be care, there maybe has some bugs that i have not found yet.
 You can install my fork library with composer.
 
 ```php
-composer require "lanlin/nylas-php"
+composer require "sumacrm/nylas-php"
 ```
 
 
@@ -239,7 +239,7 @@ $is_valid = $client->xSignatureVerification($code, $data, $app_secret)
 
 ## End
 
-This nylas-php project is forked by https://github.com/lanlin,
+This nylas-php project is forked by https://github.com/lanlin and by https://github.com/samuelfa (support for PHP 5.6)
 
 it's not the official version. The official version has many bugs.
 

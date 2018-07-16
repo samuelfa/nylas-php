@@ -29,12 +29,12 @@ class File extends Model
      * @return \Nylas\Models\File
      * @throws \Exception
      */
-    public function create(string $fileName, string $rename = null)
+    public function create($fileName, $rename = null)
     {
         $payload[] =
         [
             'name'     => 'file',
-            'filename' => basename($rename ?? $fileName),
+            'filename' => basename($rename ? $rename : $fileName),
             'contents' => fopen($fileName, 'r')
         ];
 
@@ -53,9 +53,9 @@ class File extends Model
      * @return string
      * @throws \Exception
      */
-    public function download(string $fileId = null)
+    public function download($fileId = null)
     {
-        $id = $fileId ?? $this->data['id'];
+        $id = $fileId ? $fileId : $this->data['id'];
 
         if (!$id)
         {

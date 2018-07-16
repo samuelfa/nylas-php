@@ -82,12 +82,12 @@ class Event extends Model
     // ------------------------------------------------------------------------------
 
     /**
-     * @param $data
+     * @param array $data
      * @param string $eventId
      * @return mixed
      * @throws \Exception
      */
-    public function update($data, string $eventId = null)
+    public function update(array $data, $eventId = null)
     {
         $sanitized = [];
 
@@ -99,7 +99,7 @@ class Event extends Model
             }
         }
 
-        $id = $eventId ?? $this->data['id'];
+        $id = $eventId ? $eventId : $this->data['id'];
 
         if (!$id)
         {
@@ -116,9 +116,9 @@ class Event extends Model
      * @return mixed
      * @throws \Exception
      */
-    public function delete(string $eventId = null)
+    public function delete($eventId = null)
     {
-        $id = $eventId ?? $this->data['id'];
+        $id = $eventId ? $eventId : $this->data['id'];
 
         if (!$id)
         {

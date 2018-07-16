@@ -90,12 +90,12 @@ class Message extends Model
      * @return null|string
      * @throws \Exception
      */
-    public function raw(string $msgId = null)
+    public function raw($msgId = null)
     {
         $data    = '';
         $headers = ['Accept' => 'message/rfc822'];
 
-        $id = $msgId ?? $this->data['id'];
+        $id = $msgId ? $msgId : $this->data['id'];
 
         if (!$id)
         {

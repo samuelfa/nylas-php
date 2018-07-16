@@ -48,7 +48,7 @@ class Delta extends Model
      * @return array
      * @throws \Exception
      */
-    public function requesting(string $cursor)
+    public function requesting($cursor)
     {
         $filter =
         [
@@ -67,7 +67,7 @@ class Delta extends Model
      * @return array
      * @throws \Exception
      */
-    public function streaming(string $cursor)
+    public function streaming($cursor)
     {
         $filter =
         [
@@ -87,7 +87,7 @@ class Delta extends Model
      * @return array
      * @throws \Exception
      */
-    public function longPolling(string $cursor)
+    public function longPolling($cursor)
     {
         $filter =
         [

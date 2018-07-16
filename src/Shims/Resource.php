@@ -54,12 +54,12 @@ class Resource
      */
     public function __construct(array $options = null)
     {
-        $this->appID     = $options['app_id'] ?? '';
-        $this->appSecret = $options['app_secret'] ?? '';
+        $this->appID     = $options['app_id'] ? $options['app_id'] : '';
+        $this->appSecret = $options['app_secret'] ? $options['app_secret'] : '';
 
-        $this->apiToken  = $options['token'] ?? '';
-        $this->apiDebug  = $options['debug'] ?? false;
-        $this->apiServer = $options['api_server'] ?? $this->apiServer;
+        $this->apiToken  = $options['token'] ? $options['token'] : '';
+        $this->apiDebug  = $options['debug'] ? $options['debug'] : false;
+        $this->apiServer = $options['api_server'] ? $options['api_server'] : $this->apiServer;
     }
 
     // ------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ class Resource
      * @param bool $reset
      * @return \GuzzleHttp\Client
      */
-    public function client(bool $reset = false)
+    public function client($reset = false)
     {
         if (!$this->apiClient || $reset)
         {
@@ -90,7 +90,7 @@ class Resource
      * @return mixed
      * @throws \Exception
      */
-    public function getResource(string $id, array $filters)
+    public function getResource($id, array $filters)
     {
         if (array_key_exists('extra', $filters))
         {

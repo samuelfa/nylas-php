@@ -31,7 +31,7 @@ class Calendar extends Model
      * @return Models\Event
      * @throws \Exception
      */
-    public function events(string $calendarId = null)
+    public function events($calendarId = null)
     {
         $options =
         [
@@ -46,7 +46,7 @@ class Calendar extends Model
 
         $event->collectionName = $this->collectionName;
 
-        $id = $calendarId ?? $this->data['id'];
+        $id = $calendarId ? $calendarId : $this->data['id'];
 
         if (!$id)
         {

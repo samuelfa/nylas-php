@@ -28,7 +28,7 @@ class Label extends Model
      * @return \Nylas\Models\Label
      * @throws \Exception
      */
-    public function create(string $labelName)
+    public function create($labelName)
     {
         $payload =
         [
@@ -48,7 +48,7 @@ class Label extends Model
      * @return \Nylas\Models\Label
      * @throws \Exception
      */
-    public function update(string $id, string $newName)
+    public function update($id, $newName)
     {
         $payload =
         [
@@ -67,7 +67,7 @@ class Label extends Model
      * @return \Nylas\Models\Label
      * @throws \Exception
      */
-    public function delete(string $id)
+    public function delete($id)
     {
         $this->data = $this->deleteResource($id);
 

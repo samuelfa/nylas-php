@@ -28,7 +28,7 @@ class Account extends Model
      * @return array
      * @throws \Exception
      */
-    public function getAccount(string $token = null)
+    public function getAccount($token = null)
     {
         $url = $this->apiServer . '/account';
         $this->apiToken = $this->apiToken ? $this->apiToken : $token;
@@ -60,7 +60,7 @@ class Account extends Model
      * @return mixed
      * @throws \Exception
      */
-    public function getLabels(string $token = null)
+    public function getLabels($token = null)
     {
         $url = $this->apiServer . '/labels';
         $this->apiToken = $this->apiToken ? $this->apiToken : $token;
@@ -92,7 +92,7 @@ class Account extends Model
      * @return mixed
      * @throws \Exception
      */
-    public function getFolders(string $token = null)
+    public function getFolders($token = null)
     {
         $url = $this->apiServer . '/folders';
         $this->apiToken = $this->apiToken ? $this->apiToken : $token;

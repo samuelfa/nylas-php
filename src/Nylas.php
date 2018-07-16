@@ -39,7 +39,7 @@ class Nylas
      */
     public function __construct(array $options = null)
     {
-        $this->options = $options ?? [];
+        $this->options = $options ? $options : [];
     }
 
     // ------------------------------------------------------------------------------
@@ -50,9 +50,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\OAuth\OAuth
      */
-    public function oauth($options = null)
+    public function oauth(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new OAuth\OAuth($options);
     }
@@ -65,9 +65,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Account
      */
-    public function account($options = null)
+    public function account(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Account($options);
     }
@@ -80,9 +80,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Thread
      */
-    public function threads($options = null)
+    public function threads(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Thread($options);
     }
@@ -95,9 +95,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Message
      */
-    public function messages($options = null)
+    public function messages(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Message($options);
     }
@@ -110,9 +110,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Draft
      */
-    public function drafts($options = null)
+    public function drafts(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Draft($options);
     }
@@ -125,9 +125,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Label
      */
-    public function labels($options = null)
+    public function labels(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Label($options);
     }
@@ -140,9 +140,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Folder
      */
-    public function folders($options = null)
+    public function folders(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Folder($options);
     }
@@ -155,9 +155,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\File
      */
-    public function files($options = null)
+    public function files(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\File($options);
     }
@@ -170,9 +170,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Contact
      */
-    public function contacts($options = null)
+    public function contacts(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Contact($options);
     }
@@ -185,9 +185,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Calendar
      */
-    public function calendars($options = null)
+    public function calendars(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Calendar($options);
     }
@@ -200,9 +200,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Event
      */
-    public function events($options = null)
+    public function events(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Event($options);
     }
@@ -215,9 +215,9 @@ class Nylas
      * @param array $options
      * @return \Nylas\Models\Delta
      */
-    public function deltas($options = null)
+    public function deltas(array $options = null)
     {
-        $options = array_merge($this->options, $options ?? []);
+        $options = array_merge($this->options, $options ? $options : []);
 
         return new Models\Delta($options);
     }
@@ -234,9 +234,9 @@ class Nylas
      * @param string|NULL $secret
      * @return bool
      */
-    public function xSignatureVerification(string $code, string $data, string $secret = null)
+    public function xSignatureVerification($code, $data, $secret = null)
     {
-        $key  = $secret ?? $this->options['app_secret'];
+        $key  = $secret ? $secret : $this->options['app_secret'];
 
         $hash = hash_hmac('sha256', $data, $key);
 

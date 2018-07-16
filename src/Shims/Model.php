@@ -48,12 +48,13 @@ class Model extends Resource
      * get first item
      *
      * @return mixed
+     * @throws \Exception
      */
     public function first()
     {
         $results = $this->getModelCollection(0, 1);
 
-        return $results[0] ?? null;
+        return $results[0] ? $results[0] : null;
     }
 
     // ------------------------------------------------------------------------------
@@ -64,6 +65,7 @@ class Model extends Resource
      * @param int $offset
      * @param int $limit
      * @return array
+     * @throws \Exception
      */
     public function part($offset = 0, $limit = 50)
     {
@@ -77,6 +79,7 @@ class Model extends Resource
      *
      * @param $limit
      * @return array
+     * @throws \Exception
      */
     public function all($limit = INF)
     {
@@ -105,6 +108,7 @@ class Model extends Resource
      *
      * @param $id
      * @return mixed
+     * @throws \Exception
      */
     public function find($id)
     {
@@ -117,6 +121,7 @@ class Model extends Resource
      * get items
      *
      * @return \Generator
+     * @throws \Exception
      */
     public function items()
     {
@@ -144,9 +149,10 @@ class Model extends Resource
     /**
      * get data by range
      *
-     * @param $offset
-     * @param $limit
+     * @param int $offset
+     * @param int $limit
      * @return array
+     * @throws \Exception
      */
     protected function range($offset, $limit)
     {
@@ -175,6 +181,7 @@ class Model extends Resource
      *
      * @param $id
      * @return \Nylas\Shims\Model
+     * @throws \Exception
      */
     protected function getModel($id)
     {

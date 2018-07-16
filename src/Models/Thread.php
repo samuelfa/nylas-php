@@ -29,7 +29,7 @@ class Thread extends Model
      * @return Model
      * @throws \Exception
      */
-    public function messages(string $threadId = null)
+    public function messages($threadId = null)
     {
         $options =
         [
@@ -44,7 +44,7 @@ class Thread extends Model
 
         $msg->collectionName = $this->collectionName;
 
-        $id = $threadId ?? $this->data['id'];
+        $id = $threadId ? $threadId : $this->data['id'];
 
         if (!$id)
         {
@@ -63,7 +63,7 @@ class Thread extends Model
      * @return Models\Draft
      * @throws \Exception
      */
-    public function drafts(string $threadId = null)
+    public function drafts($threadId = null)
     {
         $options =
         [
@@ -78,7 +78,7 @@ class Thread extends Model
 
         $draft->collectionName = $this->collectionName;
 
-        $id = $threadId ?? $this->data['id'];
+        $id = $threadId ? $threadId : $this->data['id'];
 
         if (!$id)
         {
@@ -97,9 +97,9 @@ class Thread extends Model
      * @return mixed
      * @throws \Exception
      */
-    public function createReply(string $threadId = null)
+    public function createReply($threadId = null)
     {
-        $id = $threadId ?? $this->data['id'];
+        $id = $threadId ? $threadId : $this->data['id'];
 
         if (!$id)
         {

@@ -25,12 +25,12 @@ class OAuth extends Model
      * @param string $state (custom params would be sent back)
      * @return string
      */
-    public function createAuthURL(string $redirectUri, string $loginHint = null, string $state = null)
+    public function createAuthURL($redirectUri, $loginHint = null, $state = null)
     {
         $args =
         [
             'scope'         => 'email',
-            'state'         => $state ?? $this->generateId(),
+            'state'         => $state ? $state : $this->generateId(),
             'client_id'     => $this->appID,
             'login_hint'    => $loginHint,
             'redirect_uri'  => $redirectUri,
@@ -49,7 +49,7 @@ class OAuth extends Model
      * @return string
      * @throws \Exception
      */
-    public function getAuthToken(string $code)
+    public function getAuthToken($code)
     {
         $args =
         [
@@ -96,7 +96,7 @@ class OAuth extends Model
      * @return mixed
      * @throws \Exception
      */
-    public function revoke(string $token)
+    public function revoke($token)
     {
         $this->apiToken = $token;
 
